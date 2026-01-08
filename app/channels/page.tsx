@@ -126,7 +126,7 @@ export default function Channels() {
       <div className="bg-[var(--primary)]/10 border border-[var(--primary)]/20 rounded-xl p-4 mb-4">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 flex-shrink-0">
-            <Sticker name="info" size={32} />
+            <Sticker name="channelHint" size={32} />
           </div>
           <div className="text-sm text-[var(--text-primary)]">
             <p className="font-medium mb-1">{t('channels.howToConnect')}</p>

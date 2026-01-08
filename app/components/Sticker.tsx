@@ -6,81 +6,93 @@ import { useEffect, useState } from 'react'
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
 
 // ═══════════════════════════════════════════════════════════════
-// UNIC Sticker Catalog - Contextual & Unique
+// UNIC Sticker Catalog - Contextual Mix
+//
+// SOURCES:
+// - /stickers/gifts/ (55) - Gift boxes for packages & prizes
+// - /stickers/ducks/ (120) - Daks_2024 fun ducks for UI & cards
+// - /stickers/mascot/ (120) - Utya ONLY for support & onboarding
+// - /stickers/ui/ (60) - UI elements for states
+// - /stickers/locket/ (60) - Hearts for special decorations
 //
 // RULES:
-// 1. NO DUPLICATES - each sticker used only once
+// 1. NO DUPLICATES - each sticker used only once across app
 // 2. Utya (mascot) ONLY for: support, empty states, onboarding
-// 3. Gifts for: packages (each plan = unique gift)
-// 4. Locket hearts for: decorative elements, cards
-// 5. UI stickers for: tabs, states
+// 3. Gifts ONLY for: packages (unique per plan) & prizes
+// 4. Ducks for: fun UI elements, tab bar, feature cards
+// 5. Mix types by CONTEXT, not by folder
 // ═══════════════════════════════════════════════════════════════
 
 export const STICKERS = {
   // ════════════════════════════════════════════════════════════
-  // TAB BAR (5 unique simple icons from UI pack)
+  // TAB BAR (5 tabs) - Fun ducks for navigation
   // ════════════════════════════════════════════════════════════
-  tabHome: '/stickers/ui/0.json',
-  tabEvents: '/stickers/ui/5.json',
-  tabChannels: '/stickers/ui/10.json',
-  tabPlans: '/stickers/ui/15.json',
-  tabProfile: '/stickers/ui/20.json',
+  tabHome: '/stickers/ducks/0.json',        // Home duck
+  tabEvents: '/stickers/ducks/10.json',     // Party duck
+  tabChannels: '/stickers/ducks/20.json',   // Broadcast duck
+  tabPlans: '/stickers/ducks/30.json',      // Star duck
+  tabProfile: '/stickers/ducks/40.json',    // Profile duck
 
   // ════════════════════════════════════════════════════════════
-  // FEATURE CARDS - contextual locket hearts
+  // FEATURE CARDS - Mixed by context
   // ════════════════════════════════════════════════════════════
-  cardNewEvent: '/stickers/locket/0.json',     // Launch/rocket feel
-  cardMyEvents: '/stickers/locket/5.json',     // Calendar/list
-  cardChannels: '/stickers/locket/10.json',    // Broadcast
-  cardPlans: '/stickers/locket/15.json',       // Star/premium
-  cardProfile: '/stickers/locket/20.json',     // User
+  cardNewEvent: '/stickers/ducks/50.json',   // Excited duck - launch new event
+  cardMyEvents: '/stickers/ducks/60.json',   // Calendar duck - my events
+  cardChannels: '/stickers/ducks/70.json',   // Megaphone duck - channels
+  cardPlans: '/stickers/gifts/5.json',       // Gift - upgrade plan
+  cardProfile: '/stickers/ducks/80.json',    // Waving duck - profile
 
   // ════════════════════════════════════════════════════════════
   // PACKAGES - 5 UNIQUE GIFTS (one per plan, NO DUPLICATES!)
   // ════════════════════════════════════════════════════════════
-  giftFree: '/stickers/gifts/0.json',          // Simple small gift
-  giftTrial: '/stickers/gifts/8.json',         // Medium gift
-  giftBasic: '/stickers/gifts/16.json',        // Nice wrapped gift
-  giftAdvanced: '/stickers/gifts/24.json',     // Premium gift
-  giftPremium: '/stickers/gifts/32.json',      // Luxury gold gift
+  giftFree: '/stickers/gifts/0.json',        // Simple small gift
+  giftTrial: '/stickers/gifts/10.json',      // Trial gift box
+  giftBasic: '/stickers/gifts/20.json',      // Nice wrapped gift
+  giftAdvanced: '/stickers/gifts/30.json',   // Premium gift
+  giftPremium: '/stickers/gifts/40.json',    // Luxury gold gift
 
   // ════════════════════════════════════════════════════════════
-  // ONBOARDING - mascot poses (4 unique)
+  // ONBOARDING - Utya mascot poses (4 unique)
   // ════════════════════════════════════════════════════════════
-  onboard1: '/stickers/mascot/0.json',
-  onboard2: '/stickers/mascot/15.json',
-  onboard3: '/stickers/mascot/30.json',
-  onboard4: '/stickers/mascot/45.json',
+  onboard1: '/stickers/mascot/0.json',       // Welcome pose
+  onboard2: '/stickers/mascot/20.json',      // Explaining pose
+  onboard3: '/stickers/mascot/40.json',      // Excited pose
+  onboard4: '/stickers/mascot/60.json',      // Thumbs up pose
 
   // ════════════════════════════════════════════════════════════
   // SUPPORT & EMPTY STATES - Utya mascot ONLY HERE
   // ════════════════════════════════════════════════════════════
-  support: '/stickers/mascot/60.json',         // Helpful duck
-  noEvents: '/stickers/mascot/75.json',        // Sad/waiting duck
-  noChannels: '/stickers/mascot/90.json',      // Looking duck
+  support: '/stickers/mascot/80.json',       // Helpful Utya
+  noEvents: '/stickers/mascot/100.json',     // Sad/waiting Utya
+  noChannels: '/stickers/mascot/110.json',   // Looking Utya
 
   // ════════════════════════════════════════════════════════════
-  // UI STATES - different stickers
+  // UI STATES - Mix of UI elements and ducks
   // ════════════════════════════════════════════════════════════
-  loading: '/stickers/ui/25.json',
-  success: '/stickers/locket/25.json',
-  error: '/stickers/ui/30.json',
-  warning: '/stickers/ui/35.json',
+  loading: '/stickers/ducks/90.json',        // Loading duck
+  success: '/stickers/ducks/100.json',       // Happy duck
+  error: '/stickers/ducks/105.json',         // Sad duck
+  warning: '/stickers/ui/0.json',            // Warning icon
 
   // ════════════════════════════════════════════════════════════
-  // BANNERS & DECORATIONS - all unique
+  // BANNERS & DECORATIONS - Hearts for special moments
   // ════════════════════════════════════════════════════════════
-  banner: '/stickers/locket/30.json',
-  info: '/stickers/ui/40.json',
-  profileDecor: '/stickers/locket/35.json',
-  welcome: '/stickers/locket/40.json',
+  banner: '/stickers/locket/0.json',         // Banner heart
+  info: '/stickers/ui/10.json',              // Info icon
+  profileDecor: '/stickers/locket/10.json',  // Profile decoration
+  welcome: '/stickers/locket/20.json',       // Welcome heart
 
   // ════════════════════════════════════════════════════════════
-  // LEADERBOARD & PRIZES
+  // LEADERBOARD & PRIZES - Gifts for prizes
   // ════════════════════════════════════════════════════════════
-  trophy: '/stickers/gifts/40.json',
-  medal: '/stickers/gifts/48.json',
-  crown: '/stickers/locket/45.json',
+  trophy: '/stickers/gifts/45.json',         // Trophy gift
+  medal: '/stickers/gifts/50.json',          // Medal gift
+  crown: '/stickers/locket/30.json',         // Crown heart
+
+  // ════════════════════════════════════════════════════════════
+  // CHANNELS HINT - Unique duck
+  // ════════════════════════════════════════════════════════════
+  channelHint: '/stickers/ducks/110.json',   // Helpful duck for hint
 } as const
 
 export type StickerName = keyof typeof STICKERS
