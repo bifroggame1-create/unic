@@ -185,19 +185,24 @@ export default function Packages() {
                 ))}
               </ul>
 
-              {/* CTA Button - BIG & PROMINENT */}
+              {/* CTA Button - MEGA BIG */}
               <button
                 onClick={() => handleSubscribe(pkg)}
                 disabled={pkg.disabled}
-                className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-[0.98] ${
+                className={`w-full py-5 rounded-2xl font-black text-lg tracking-wide transition-all active:scale-[0.97] flex items-center justify-center gap-2 ${
                   pkg.disabled
                     ? 'bg-[var(--bg-start)] text-[var(--text-muted)] cursor-not-allowed'
                     : pkg.popular
-                      ? `bg-gradient-to-r ${pkg.gradient} text-white shadow-lg hover:shadow-xl hover:scale-[1.02]`
-                      : `bg-gradient-to-r ${pkg.gradient} text-white shadow-md hover:shadow-lg hover:scale-[1.01]`
+                      ? `bg-gradient-to-r ${pkg.gradient} text-white shadow-xl shadow-emerald-500/30 hover:shadow-2xl hover:scale-[1.02]`
+                      : `bg-gradient-to-r ${pkg.gradient} text-white shadow-lg hover:shadow-xl hover:scale-[1.01]`
                 }`}
               >
                 {t(pkg.ctaKey)}
+                {!pkg.disabled && (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
