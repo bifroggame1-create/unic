@@ -11,12 +11,12 @@ const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
 // ═══════════════════════════════════════════════════════════════
 
 export const STICKERS = {
-  // PACKAGES - 5 УНИКАЛЬНЫХ стикеров (ВСЕ из разных источников)
-  giftFree: '/stickers/ducks/3.json',        // Free - утка 3
-  giftTrial: '/stickers/locket/12.json',     // Trial - сердечко 12
-  giftBasic: '/stickers/gifts/7.json',       // Basic - подарок 7
-  giftAdvanced: '/stickers/ui/22.json',      // Advanced - ui 22
-  giftPremium: '/stickers/ducks/88.json',    // Premium - утка 88 (другая)
+  // PACKAGES - 5 ВИЗУАЛЬНО РАЗНЫХ стикеров
+  giftFree: '/stickers/ducks/1.json',        // Free - утка
+  giftTrial: '/stickers/gifts/5.json',       // Trial - подарок 5
+  giftBasic: '/stickers/locket/0.json',      // Basic - сердце
+  giftAdvanced: '/stickers/gifts/50.json',   // Advanced - подарок 50
+  giftPremium: '/stickers/locket/55.json',   // Premium - сердце 55
 
   // TAB BAR - разные
   tabHome: '/stickers/ducks/0.json',
