@@ -1,26 +1,374 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME (Default)
+   ═══════════════════════════════════════════════════════════════ */
+:root, .light {
+  /* Primary colors - blue accent */
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+
+  /* Background gradient */
+  --bg-start: #e8f4fc;
+  --bg-end: #f0f7ff;
+
+  /* Cards */
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  /* Text */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  /* Accents */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+
+  /* Tab bar */
+  --tab-bg: #ffffff;
+  --tab-active: #2563eb;
+  --tab-inactive: #9ca3af;
+
+  /* Input */
+  --input-bg: #ffffff;
+  --input-border: #e5e7eb;
+
+  /* Telegram theme vars for compatibility */
+  --tg-theme-bg-color: #f0f4ff;
+  --tg-theme-text-color: #1f2937;
+  --tg-theme-secondary-bg-color: #ffffff;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK THEME
+   ═══════════════════════════════════════════════════════════════ */
+.dark {
+  /* Primary colors - brighter blue for dark mode */
+  --primary: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+
+  /* Background gradient - deep blue-black */
+  --bg-start: #0f172a;
+  --bg-end: #1e293b;
+
+  /* Cards - dark surfaces */
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  /* Text - inverted */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Accents - slightly adjusted for dark */
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #f87171;
+
+  /* Tab bar */
+  --tab-bg: #1e293b;
+  --tab-active: #60a5fa;
+  --tab-inactive: #64748b;
+
+  /* Input */
+  --input-bg: #1e293b;
+  --input-border: #334155;
+
+  /* Telegram theme vars */
+  --tg-theme-bg-color: #0f172a;
+  --tg-theme-text-color: #f1f5f9;
+  --tg-theme-secondary-bg-color: #1e293b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Card styles */
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
+}
+
+/* Button styles - Mobile Optimized */
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px; /* Touch-friendly */
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: var(--card-bg);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-start);
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
+/* Banner gradient like osint.tg */
+.banner-gradient {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: white;
+}
+
+/* Safe area for Telegram Mini App */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-area-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0) + 80px);
+}
+
+/* Tab bar fixed bottom */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--tab-bg);
+  border-top: 1px solid var(--card-border);
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0));
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 16px;
+  color: var(--tab-inactive);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.tab-item.active {
+  color: var(--tab-active);
+}
+
+.tab-icon {
+  font-size: 24px;
+}
+
+/* Input styles */
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--input-border);
+  border-radius: 12px;
+  font-size: 16px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Toggle switch */
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: #e5e7eb;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle-switch.active {
+  background: var(--primary);
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.toggle-switch.active::after {
+  transform: translateX(24px);
+}
+
+/* Segment control (Monthly/Yearly toggle) */
+.segment-control {
+  display: inline-flex;
+  background: #e5e7eb;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.segment-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.segment-btn.active {
+  background: var(--text-primary);
+  color: white;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Pull to refresh indicator */
+.ptr-indicator {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  color: var(--text-muted);
+}
+
+/* Onboarding highlight */
+.onboarding-highlight {
+  position: relative;
+  z-index: 101;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3), 0 0 20px rgba(37, 99, 235, 0.2);
+  border-radius: 12px;
+  animation: pulse-highlight 2s infinite;
+}
+
+@keyframes pulse-highlight {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3), 0 0 20px rgba(37, 99, 235, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.2), 0 0 30px rgba(37, 99, 235, 0.3); }
+}
+
+/* Animation for modal appearance */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Sticker bounce animation */
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.sticker-bounce {
+  animation: bounce-soft 2s ease-in-out infinite;
 }

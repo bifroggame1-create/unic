@@ -1,0 +1,52 @@
+'use client'
+
+import { ReactNode, useState, useEffect } from 'react'
+import { TelegramProvider } from './contexts/TelegramContext'
+import { ThemeProvider } from './contexts/ThemeContext'
+import { LanguageProvider } from './contexts/LanguageContext'
+import Header from './components/Header'
+import TabBar from './components/TabBar'
+import Onboarding from './components/Onboarding'
+
+const ONBOARDING_KEY = 'unic_onboarding_complete'
+
+export function Providers({ children }: { children: ReactNode }) {
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    // Check if onboarding was completed
+    const completed = localStorage.getItem(ONBOARDING_KEY)
+    if (!completed) {
+      // Small delay to let the app render first
+      setTimeout(() => setShowOnboarding(true), 500)
+    }
+  }, [])
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem(ONBOARDING_KEY, 'true')
+    setShowOnboarding(false)
+  }
+
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <TelegramProvider>
+          <div className="min-h-screen flex flex-col bg-[var(--tg-theme-bg-color)] text-[var(--tg-theme-text-color)]">
+            <Header />
+            <main className="flex-1 px-4 pb-24">
+              {children}
+            </main>
+            <TabBar />
+
+            {/* Onboarding overlay */}
+            {mounted && showOnboarding && (
+              <Onboarding onComplete={handleOnboardingComplete} />
+            )}
+          </div>
+        </TelegramProvider>
+      </LanguageProvider>
+    </ThemeProvider>
+  )
+}
