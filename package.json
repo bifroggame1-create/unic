@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@telegram-apps/telegram-ui": "^2.1.13",
+    "@tonconnect/ui-react": "^2.3.1",
     "framer-motion": "^12.25.0",
     "lottie-react": "^2.4.1",
     "next": "16.1.1",
