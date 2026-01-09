@@ -177,6 +177,17 @@ class ApiClient {
     const userId = this.telegramId || DEV_USER_ID
     return this.request<TimelineResponse>(`/api/events/${eventId}/timeline?userId=${userId}`)
   }
+
+  async getGifts() {
+    return this.request<{ gifts: GiftOption[] }>('/api/gifts')
+  }
+
+  async createEventPayment(eventId: string) {
+    return this.request<{ invoiceLink: string; paymentId: string; amount: number; packageName: string }>(
+      `/api/events/${eventId}/payment`,
+      { method: 'POST' }
+    )
+  }
 }
 
 // Types
@@ -243,6 +254,15 @@ export interface CreateEventData {
   duration: '24h' | '48h' | '72h' | '7d'
   activityType: 'reactions' | 'comments' | 'all'
   winnersCount: number
+  prizes?: Array<{
+    giftId: string
+    name: string
+    position: number
+    value?: number
+  }>
+  packageId?: string
+  title?: string
+  boostsEnabled?: boolean
 }
 
 export interface LeaderboardEntry {
@@ -259,6 +279,12 @@ export interface LeaderboardResponse {
   event: Event
   leaderboard: LeaderboardEntry[]
   totalParticipants: number
+  pagination?: {
+    total: number
+    limit: number
+    offset: number
+    hasMore: boolean
+  }
 }
 
 export interface UserPosition {
@@ -327,6 +353,14 @@ export interface TimelineResponse {
   boostMultiplier: number
   boostExpiresAt?: string
   lastActivityAt: string
+}
+
+export interface GiftOption {
+  id: string
+  name: string
+  starValue: number
+  available: boolean
+  description: string
 }
 
 export const api = new ApiClient()
