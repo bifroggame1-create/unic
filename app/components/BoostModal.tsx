@@ -33,22 +33,23 @@ export default function BoostModal({
     setProcessing(true)
 
     try {
+      // Call the actual purchase handler which will use Telegram Stars
       await onPurchase()
+
       trackEvent('boost_purchased', eventId, userId, {
         price: BOOST_PRICING.BASE.priceStars,
         multiplier: BOOST_PRICING.BASE.multiplier,
       })
 
-      webApp?.showAlert('Boost активирован! Твои следующие действия принесут больше очков.')
       haptic.notification('success')
       onClose()
     } catch (error: any) {
       console.error('Boost purchase error:', error)
 
-      if (error.message?.includes('reject')) {
+      if (error.message?.includes('reject') || error.message?.includes('cancel')) {
         webApp?.showAlert('Оплата отменена')
       } else {
-        webApp?.showAlert('Не удалось активировать Boost. Попробуй снова.')
+        webApp?.showAlert(error.message || 'Не удалось активировать Boost. Попробуй снова.')
       }
 
       haptic.notification('error')

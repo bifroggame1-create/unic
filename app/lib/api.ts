@@ -210,17 +210,13 @@ class ApiClient {
     return this.request<EventWithPositionResponse>(url)
   }
 
-  async createBoostInvoice(eventId: string, boostType: 'x2_24h' | 'x1.5_forever') {
+  // Boost monetization (MVP: x1.5 until event ends, 100 Stars)
+  async createBoostInvoice(eventId: string) {
     if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
-    if (!['x2_24h', 'x1.5_forever'].includes(boostType)) throw new Error('Invalid boost type')
 
-    const userId = this.telegramId || DEV_USER_ID
-    return this.request<{ invoiceLink: string; paymentId: string; amount: number }>(
+    return this.request<{ invoiceLink: string; paymentId: string; amount: number; multiplier: number }>(
       `/api/events/${this.encodeQueryParam(eventId)}/boost/invoice`,
-      {
-        method: 'POST',
-        body: { userId, boostType },
-      }
+      { method: 'POST' }
     )
   }
 
@@ -228,11 +224,36 @@ class ApiClient {
     if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
     if (!paymentId || typeof paymentId !== 'string') throw new Error('Invalid payment ID')
 
-    const userId = this.telegramId || DEV_USER_ID
-    return this.request<BoostResponse>(`/api/events/${this.encodeQueryParam(eventId)}/boost/apply`, {
-      method: 'POST',
-      body: { userId, paymentId },
-    })
+    return this.request<{ success: boolean; multiplier: number; message: string }>(
+      `/api/events/${this.encodeQueryParam(eventId)}/boost/apply`,
+      {
+        method: 'POST',
+        body: { paymentId },
+      }
+    )
+  }
+
+  // Second Chance monetization (75 Stars)
+  async createSecondChanceInvoice(eventId: string) {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+
+    return this.request<{ invoiceLink: string; paymentId: string; amount: number }>(
+      `/api/events/${this.encodeQueryParam(eventId)}/second-chance/invoice`,
+      { method: 'POST' }
+    )
+  }
+
+  async applySecondChance(eventId: string, paymentId: string) {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+    if (!paymentId || typeof paymentId !== 'string') throw new Error('Invalid payment ID')
+
+    return this.request<{ success: boolean; message: string }>(
+      `/api/events/${this.encodeQueryParam(eventId)}/second-chance/apply`,
+      {
+        method: 'POST',
+        body: { paymentId },
+      }
+    )
   }
 
   async getActivityTimeline(eventId: string) {

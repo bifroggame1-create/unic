@@ -33,23 +33,22 @@ export default function SecondChanceModal({
     setProcessing(true)
 
     try {
+      // Call the actual purchase handler which will use Telegram Stars
       await onPurchase()
+
       trackEvent('second_chance_purchased', eventId, userId, {
         price: SECOND_CHANCE_PRICING.BASE.priceStars,
       })
 
-      webApp?.showAlert(
-        'Second Chance активирован! Дополнительный розыгрыш будет проведён в ближайшее время.'
-      )
       haptic.notification('success')
       onClose()
     } catch (error: any) {
       console.error('Second Chance purchase error:', error)
 
-      if (error.message?.includes('reject')) {
+      if (error.message?.includes('reject') || error.message?.includes('cancel')) {
         webApp?.showAlert('Оплата отменена')
       } else {
-        webApp?.showAlert('Не удалось активировать Second Chance. Попробуй снова.')
+        webApp?.showAlert(error.message || 'Не удалось активировать Second Chance. Попробуй снова.')
       }
 
       haptic.notification('error')

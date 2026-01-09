@@ -154,18 +154,58 @@ export default function EventOverview() {
   }, [data?.event.timeRemaining])
 
   const handleBoostPurchase = async () => {
-    // Will be implemented with Telegram Stars payment
-    // For now just placeholder
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    fetchData()
+    try {
+      // Create Telegram Stars invoice
+      const { invoiceLink, paymentId } = await api.createBoostInvoice(eventId)
+
+      // Open Telegram Stars payment
+      webApp?.openInvoice?.(invoiceLink, async (status: string) => {
+        if (status === 'paid') {
+          try {
+            // Apply boost after payment
+            const result = await api.applyBoost(eventId, paymentId)
+            webApp?.showAlert(result.message)
+            fetchData()
+          } catch (error: any) {
+            throw new Error(error.message || 'Failed to activate boost')
+          }
+        } else if (status === 'cancelled') {
+          throw new Error('Payment cancelled')
+        } else if (status === 'failed') {
+          throw new Error('Payment failed')
+        }
+      })
+    } catch (error: any) {
+      throw error
+    }
   }
 
   const handleSecondChancePurchase = async () => {
-    // Will be implemented with Telegram Stars payment
-    // For now just placeholder
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setSecondChanceUsed(true)
-    fetchData()
+    try {
+      // Create Telegram Stars invoice
+      const { invoiceLink, paymentId } = await api.createSecondChanceInvoice(eventId)
+
+      // Open Telegram Stars payment
+      webApp?.openInvoice?.(invoiceLink, async (status: string) => {
+        if (status === 'paid') {
+          try {
+            // Apply second chance after payment
+            const result = await api.applySecondChance(eventId, paymentId)
+            webApp?.showAlert(result.message)
+            setSecondChanceUsed(true)
+            fetchData()
+          } catch (error: any) {
+            throw new Error(error.message || 'Failed to activate second chance')
+          }
+        } else if (status === 'cancelled') {
+          throw new Error('Payment cancelled')
+        } else if (status === 'failed') {
+          throw new Error('Payment failed')
+        }
+      })
+    } catch (error: any) {
+      throw error
+    }
   }
 
   if (loading) {
