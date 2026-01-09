@@ -145,7 +145,26 @@ class ApiClient {
   }
 
   async getMyPosition(eventId: string) {
-    return this.request<{ position: UserPosition | null }>(`/api/events/${eventId}/position`)
+    const userId = this.telegramId || DEV_USER_ID
+    return this.request<{ position: UserPosition | null }>(`/api/events/${eventId}/position?userId=${userId}`)
+  }
+
+  async getEventWithPosition(id: string) {
+    const userId = this.telegramId || DEV_USER_ID
+    return this.request<EventWithPositionResponse>(`/api/events/${id}?userId=${userId}`)
+  }
+
+  async purchaseBoost(eventId: string, boostType: 'x2_24h' | 'x1.5_forever', starsPaid: number) {
+    const userId = this.telegramId || DEV_USER_ID
+    return this.request<BoostResponse>(`/api/events/${eventId}/boost`, {
+      method: 'POST',
+      body: { userId, boostType, starsPaid },
+    })
+  }
+
+  async getActivityTimeline(eventId: string) {
+    const userId = this.telegramId || DEV_USER_ID
+    return this.request<TimelineResponse>(`/api/events/${eventId}/timeline?userId=${userId}`)
   }
 }
 
@@ -236,6 +255,67 @@ export interface UserPosition {
   points: number
   reactionsCount: number
   commentsCount: number
+}
+
+export interface EventWithPositionResponse {
+  event: {
+    id: string
+    title?: string
+    status: string
+    duration: string
+    activityType: string
+    winnersCount: number
+    startsAt?: string
+    endsAt?: string
+    participantsCount: number
+    totalReactions: number
+    totalComments: number
+    prizes: {
+      giftId: string
+      name: string
+      position: number
+      value?: number
+    }[]
+    boostsEnabled: boolean
+    timeRemaining?: {
+      hours: number
+      minutes: number
+      totalMs: number
+    }
+  }
+  topTen: LeaderboardEntry[]
+  userPosition: {
+    rank: number
+    points: number
+    totalParticipants: number
+  } | null
+}
+
+export interface BoostResponse {
+  success: boolean
+  message: string
+  boost: {
+    type: 'x2_24h' | 'x1.5_forever'
+    multiplier: number
+    expiresAt?: string
+  }
+  userPosition: {
+    rank: number
+    points: number
+    totalParticipants: number
+  }
+}
+
+export interface TimelineResponse {
+  timeline: {
+    type: 'reactions' | 'comments' | 'replies'
+    count: number
+    points: number
+  }[]
+  totalPoints: number
+  boostMultiplier: number
+  boostExpiresAt?: string
+  lastActivityAt: string
 }
 
 export const api = new ApiClient()

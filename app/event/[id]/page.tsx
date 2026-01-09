@@ -1,38 +1,30 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'next/navigation'
-import { api, Event, LeaderboardEntry, UserPosition } from '../../lib/api'
+import { useEffect, useState, useCallback } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { api, EventWithPositionResponse } from '../../lib/api'
 import { useTelegram } from '../../contexts/TelegramContext'
 import { useTranslation } from '../../contexts/LanguageContext'
 import Sticker from '../../components/Sticker'
 
-export default function EventLeaderboard() {
+export default function EventOverview() {
   const params = useParams()
-  const eventId = params.id as string
+  const router = useRouter()
+  const eventId = params?.id as string
   const { webApp } = useTelegram()
   const { t } = useTranslation()
 
-  const [event, setEvent] = useState<Event | null>(null)
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
-  const [myPosition, setMyPosition] = useState<UserPosition | null>(null)
-  const [totalParticipants, setTotalParticipants] = useState(0)
-  const [timeLeft, setTimeLeft] = useState('')
+  const [data, setData] = useState<EventWithPositionResponse | null>(null)
   const [loading, setLoading] = useState(true)
+  const [timeLeft, setTimeLeft] = useState('')
+  const [showBoostModal, setShowBoostModal] = useState(false)
 
   const fetchData = useCallback(async () => {
     try {
-      const [leaderboardRes, positionRes] = await Promise.all([
-        api.getLeaderboard(eventId, 50),
-        api.getMyPosition(eventId),
-      ])
-
-      setEvent(leaderboardRes.event)
-      setLeaderboard(leaderboardRes.leaderboard)
-      setTotalParticipants(leaderboardRes.totalParticipants)
-      setMyPosition(positionRes.position)
+      const response = await api.getEventWithPosition(eventId)
+      setData(response)
     } catch (error) {
-      console.error('Failed to fetch leaderboard:', error)
+      console.error('Failed to fetch event:', error)
     } finally {
       setLoading(false)
     }
@@ -47,49 +39,65 @@ export default function EventLeaderboard() {
 
   // Update timer
   useEffect(() => {
-    if (!event?.endsAt) return
+    if (!data?.event.timeRemaining) return
 
     const updateTimer = () => {
-      const end = new Date(event.endsAt!).getTime()
+      const { hours, minutes, totalMs } = data.event.timeRemaining!
+
+      if (totalMs <= 0) {
+        setTimeLeft(t('leaderboard.ended'))
+        return
+      }
+
       const now = Date.now()
-      const diff = end - now
+      const endTime = now + totalMs
+      const diff = endTime - now
 
       if (diff <= 0) {
         setTimeLeft(t('leaderboard.ended'))
         return
       }
 
-      const hours = Math.floor(diff / (1000 * 60 * 60))
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+      const h = Math.floor(diff / (1000 * 60 * 60))
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const s = Math.floor((diff % (1000 * 60)) / 1000)
 
-      if (hours > 24) {
-        const days = Math.floor(hours / 24)
-        setTimeLeft(`${days}d ${hours % 24}h ${minutes}m`)
+      if (h > 24) {
+        const days = Math.floor(h / 24)
+        setTimeLeft(`${days}d ${h % 24}h ${m}m`)
       } else {
-        setTimeLeft(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`)
+        setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`)
       }
     }
 
     updateTimer()
     const timer = setInterval(updateTimer, 1000)
     return () => clearInterval(timer)
-  }, [event?.endsAt, t])
+  }, [data?.event.timeRemaining, t])
 
-  const handleBackToChannel = () => {
-    // In Telegram, this would open the channel
-    webApp?.close()
+  const handleBoostPurchase = async (boostType: 'x2_24h' | 'x1.5_forever') => {
+    try {
+      // TODO: Integrate Telegram Stars payment
+      // For now, just call the API with a mock payment
+      const starsPaid = boostType === 'x2_24h' ? 100 : 200
+      await api.purchaseBoost(eventId, boostType, starsPaid)
+      setShowBoostModal(false)
+      fetchData() // Refresh to show new boost status
+      webApp?.showAlert('Boost activated!')
+    } catch (error: any) {
+      webApp?.showAlert(error.message || 'Failed to purchase boost')
+    }
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-[var(--text-muted)]">{t('common.loading')}</div>
+        <Sticker name="loading" size={120} />
       </div>
     )
   }
 
-  if (!event) {
+  if (!data) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
@@ -100,138 +108,176 @@ export default function EventLeaderboard() {
     )
   }
 
-  const isCompleted = event.status === 'completed'
+  const { event, topTen, userPosition } = data
+  const isActive = event.status === 'active'
+  const isWinning = userPosition && userPosition.rank <= event.winnersCount
+
+  const getActivityTypeIcon = (type: string) => {
+    const types: Record<string, string> = {
+      reactions: '👍',
+      comments: '💬',
+      all: '👍💬'
+    }
+    return types[type] || '🎯'
+  }
 
   return (
-    <div className="fade-in -mx-4">
-      {/* Header */}
-      <div className={`bg-gradient-to-b ${isCompleted ? 'from-gray-600 to-gray-500' : 'from-[var(--primary)] to-[var(--primary-dark)]'} text-white px-4 pt-4 pb-8 rounded-b-3xl`}>
+    <div className="fade-in pb-8 -mx-4">
+      {/* Header with gradient */}
+      <div className={`bg-gradient-to-b ${isActive ? 'from-[var(--primary)] to-[var(--primary-dark)]' : 'from-gray-600 to-gray-500'} text-white px-4 pt-6 pb-8 rounded-b-3xl`}>
         <div className="text-center">
-          <div className="text-4xl mb-2">{isCompleted ? '🏁' : '🏆'}</div>
-          <h1 className="text-xl font-bold mb-1">
-            {isCompleted ? t('leaderboard.eventCompleted') : t('leaderboard.eventLeaderboard')}
+          <div className="text-5xl mb-3">{isActive ? '🎁' : '🏁'}</div>
+          <h1 className="text-2xl font-bold mb-2">
+            {event.title || t('leaderboard.eventLeaderboard')}
           </h1>
-          <p className="text-white/70 text-sm">
-            {totalParticipants} {t('leaderboard.participants')}
-          </p>
+          <div className="flex items-center justify-center gap-2 text-sm opacity-90">
+            <span>{getActivityTypeIcon(event.activityType)}</span>
+            <span>{event.participantsCount} {t('leaderboard.participants')}</span>
+          </div>
         </div>
 
         {/* Timer */}
-        {!isCompleted && (
-          <div className="mt-4 bg-white/10 rounded-2xl p-4 text-center">
-            <p className="text-white/70 text-sm mb-1">{t('leaderboard.timeRemaining')}</p>
+        {isActive && event.timeRemaining && (
+          <div className="mt-5 bg-white/15 backdrop-blur-sm rounded-2xl p-4 text-center">
+            <p className="text-white/80 text-sm mb-2">{t('leaderboard.timeRemaining')}</p>
             <p className="text-3xl font-bold font-mono">{timeLeft}</p>
           </div>
         )}
       </div>
 
-      {/* Your Position */}
-      {myPosition && (
-        <div className="px-4 -mt-4">
-          <div className="card p-4 border-2 border-[var(--primary)]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[var(--primary)]/10 rounded-full flex items-center justify-center font-bold text-[var(--primary)]">
-                  #{myPosition.rank}
+      {/* Your Position Card */}
+      {userPosition && (
+        <div className="px-4 -mt-6 mb-6">
+          <div className={`card p-5 ${isWinning ? 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-400' : 'border-2 border-[var(--primary)]'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl ${isWinning ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white' : 'bg-[var(--primary)]/10 text-[var(--primary)]'}`}>
+                  #{userPosition.rank}
                 </div>
                 <div>
-                  <p className="font-medium text-[var(--text-primary)]">{t('leaderboard.yourPosition')}</p>
-                  <p className="text-xs text-[var(--text-secondary)]">{myPosition.points} {t('leaderboard.pts')}</p>
+                  <p className="font-semibold text-[var(--text-primary)]">{t('leaderboard.yourPosition')}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    {userPosition.points} {t('leaderboard.pts')}
+                  </p>
                 </div>
               </div>
-              <div className="text-right text-sm text-[var(--text-secondary)]">
-                <p>{myPosition.reactionsCount} {t('leaderboard.reactions')}</p>
-                <p>{myPosition.commentsCount} {t('leaderboard.comments')}</p>
+              {isWinning && (
+                <Sticker name="trophy" size={50} />
+              )}
+            </div>
+
+            {isWinning && (
+              <div className="bg-yellow-400/20 rounded-xl p-3 text-center">
+                <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300">
+                  🏆 {t('leaderboard.youAreWinning')}
+                </p>
               </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <button
+                onClick={() => router.push(`/event/${eventId}/leaderboard`)}
+                className="btn-secondary text-sm py-3"
+              >
+                {t('leaderboard.viewFull')}
+              </button>
+              <button
+                onClick={() => router.push(`/event/${eventId}/me`)}
+                className="btn-secondary text-sm py-3"
+              >
+                {t('leaderboard.myProgress')}
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {!myPosition && !isCompleted && (
-        <div className="px-4 -mt-4">
-          <div className="card p-4 bg-[var(--primary)]/10 border-[var(--primary)]/20 text-center">
-            <p className="text-sm text-[var(--text-secondary)]">
+      {/* Join Prompt (if not participating) */}
+      {!userPosition && isActive && (
+        <div className="px-4 -mt-6 mb-6">
+          <div className="card p-5 bg-[var(--primary)]/5 border-[var(--primary)]/20 text-center">
+            <Sticker name="mascot/20" size={80} className="mx-auto mb-3" />
+            <p className="text-sm text-[var(--text-secondary)] mb-4">
               {t('leaderboard.joinPrompt')}
             </p>
+            <button onClick={() => webApp?.close()} className="btn-primary w-full">
+              {t('leaderboard.backToChannel')}
+            </button>
           </div>
         </div>
       )}
 
-      {/* Scoring Rules */}
-      {!isCompleted && (
-        <div className="px-4 mt-4">
-          <div className="card p-3 bg-[var(--bg-start)]">
-            <p className="text-xs text-[var(--text-secondary)] text-center">
-              {t('leaderboard.scoringRules')}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Winners (if completed) */}
-      {isCompleted && event.winners && event.winners.length > 0 && (
-        <div className="px-4 mt-6">
-          <h3 className="font-semibold text-[var(--text-primary)] mb-3">{t('leaderboard.winners')}</h3>
-          <div className="space-y-2">
-            {event.winners.map((winner, idx) => (
-              <div key={winner.telegramId} className="card p-4 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold">
-                      {idx + 1}
-                    </div>
-                    <div>
-                      <p className="font-medium text-[var(--text-primary)]">
-                        {winner.username ? `@${winner.username}` : `User #${winner.telegramId}`}
-                      </p>
-                      <p className="text-xs text-[var(--text-secondary)]">{winner.points.toLocaleString()} {t('leaderboard.pts')}</p>
-                    </div>
-                  </div>
-                  <Sticker name="trophy" size={36} />
+      {/* Prizes */}
+      <div className="px-4 mb-6">
+        <h3 className="font-bold text-lg text-[var(--text-primary)] mb-4">{t('leaderboard.prizes')}</h3>
+        <div className="space-y-3">
+          {event.prizes.map((prize) => (
+            <div key={prize.position} className="card p-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
+                  prize.position <= 3
+                    ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white'
+                    : 'bg-[var(--bg-start)] text-[var(--text-secondary)]'
+                }`}>
+                  #{prize.position}
+                </div>
+                <div>
+                  <p className="font-medium text-[var(--text-primary)]">{prize.name}</p>
+                  {prize.value && (
+                    <p className="text-xs text-[var(--text-secondary)]">
+                      {prize.value} ⭐
+                    </p>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
+              <Sticker name="gifts/5" size={40} />
+            </div>
+          ))}
         </div>
-      )}
+      </div>
 
-      {/* Leaderboard */}
-      <div className="px-4 mt-6">
-        <h3 className="font-semibold text-[var(--text-primary)] mb-3">
-          {isCompleted ? t('leaderboard.finalStandings') : t('leaderboard.topParticipants')}
-        </h3>
-        {leaderboard.length === 0 ? (
-          <div className="card p-6 text-center text-[var(--text-muted)] text-sm">
-            {t('leaderboard.noParticipants')}
+      {/* Top 10 Leaderboard */}
+      <div className="px-4 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-lg text-[var(--text-primary)]">{t('leaderboard.topParticipants')}</h3>
+          <button
+            onClick={() => router.push(`/event/${eventId}/leaderboard`)}
+            className="text-sm text-[var(--primary)] font-semibold"
+          >
+            {t('leaderboard.viewAll')}
+          </button>
+        </div>
+
+        {topTen.length === 0 ? (
+          <div className="card p-8 text-center">
+            <Sticker name="noEvents" size={100} className="mx-auto mb-3" />
+            <p className="text-sm text-[var(--text-muted)]">{t('leaderboard.noParticipants')}</p>
           </div>
         ) : (
           <div className="space-y-2">
-            {leaderboard.map((user) => {
-              const isWinner = user.rank <= (event.winnersCount || 0)
+            {topTen.map((user) => {
+              const isTop3 = user.rank <= 3
               return (
                 <div
-                  key={user.telegramId}
-                  className={`card p-3 flex items-center justify-between ${
-                    isWinner ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800' : ''
+                  key={user.rank}
+                  className={`card p-4 flex items-center justify-between ${
+                    isTop3 ? 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-200' : ''
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        user.rank === 1
-                          ? 'bg-yellow-400 text-white'
-                          : user.rank === 2
-                            ? 'bg-gray-300 text-white dark:bg-gray-500'
-                            : user.rank === 3
-                              ? 'bg-amber-600 text-white'
-                              : 'bg-[var(--bg-start)] text-[var(--text-secondary)]'
-                      }`}
-                    >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                      user.rank === 1
+                        ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white'
+                        : user.rank === 2
+                          ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white'
+                          : user.rank === 3
+                            ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white'
+                            : 'bg-[var(--bg-start)] text-[var(--text-secondary)]'
+                    }`}>
                       {user.rank}
                     </div>
                     <div>
-                      <p className="font-medium text-[var(--text-primary)] text-sm">
+                      <p className="font-medium text-sm text-[var(--text-primary)]">
                         {user.firstName || user.username || t('leaderboard.anonymous')}
                       </p>
                       {user.username && (
@@ -240,11 +286,10 @@ export default function EventLeaderboard() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-[var(--text-primary)]">
+                    <span className="font-bold text-[var(--text-primary)]">
                       {user.points.toLocaleString()}
                     </span>
-                    <span className="text-xs text-[var(--text-muted)]">{t('leaderboard.pts')}</span>
-                    {isWinner && <Sticker name="medal" size={24} />}
+                    {isTop3 && <Sticker name="medal" size={24} />}
                   </div>
                 </div>
               )
@@ -253,28 +298,98 @@ export default function EventLeaderboard() {
         )}
       </div>
 
-      {/* Prizes */}
-      <div className="px-4 mt-6 mb-8">
-        <h3 className="font-semibold text-[var(--text-primary)] mb-3">{t('leaderboard.prizes')}</h3>
-        <div className="card p-4">
-          <div className="flex items-center gap-4">
-            <Sticker name="crown" size={60} />
-            <div>
-              <p className="font-medium text-[var(--text-primary)]">{t('leaderboard.telegramGifts')}</p>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Top {event.winnersCount} {t('leaderboard.topWillReceive')}
-              </p>
+      {/* Boost CTA */}
+      {isActive && event.boostsEnabled && (
+        <div className="px-4 mb-6">
+          <button
+            onClick={() => setShowBoostModal(true)}
+            className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-2xl p-5 flex items-center justify-between shadow-lg active:scale-[0.98] transition-transform"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                ⚡
+              </div>
+              <div className="text-left">
+                <div className="font-bold text-base">{t('event.boostPoints')}</div>
+                <div className="text-sm opacity-80">{t('event.getMorePoints')}</div>
+              </div>
+            </div>
+            <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Boost Modal */}
+      {showBoostModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center animate-fadeIn" onClick={() => setShowBoostModal(false)}>
+          <div className="bg-[var(--card-bg)] w-full max-w-[480px] rounded-t-3xl p-6 animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center mb-6">
+              <div className="text-5xl mb-3">⚡</div>
+              <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">{t('event.chooseBoost')}</h3>
+              <p className="text-sm text-[var(--text-secondary)]">{t('event.boostDescription')}</p>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <button
+                onClick={() => handleBoostPurchase('x2_24h')}
+                className="w-full card p-5 text-left hover:bg-[var(--bg-start)] transition-colors"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-bold text-lg text-[var(--text-primary)]">2x Boost</div>
+                  <div className="bg-[var(--primary)] text-white text-xs font-bold px-3 py-1 rounded-full">
+                    24h
+                  </div>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)] mb-3">
+                  {t('event.doublePoints')}
+                </p>
+                <div className="text-[var(--primary)] font-bold">100 ⭐</div>
+              </button>
+
+              <button
+                onClick={() => handleBoostPurchase('x1.5_forever')}
+                className="w-full card p-5 text-left hover:bg-[var(--bg-start)] transition-colors border-2 border-[var(--primary)]"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-bold text-lg text-[var(--text-primary)]">1.5x Boost</div>
+                  <div className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    FOREVER
+                  </div>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)] mb-3">
+                  {t('event.foreverBoost')}
+                </p>
+                <div className="text-[var(--primary)] font-bold">200 ⭐</div>
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowBoostModal(false)}
+              className="btn-secondary w-full"
+            >
+              {t('common.cancel')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Scoring Rules */}
+      {isActive && (
+        <div className="px-4">
+          <div className="card p-4 bg-[var(--bg-start)]">
+            <p className="text-xs text-[var(--text-secondary)] text-center mb-2">
+              {t('leaderboard.scoringRules')}
+            </p>
+            <div className="flex justify-center gap-6 text-xs text-[var(--text-muted)]">
+              <span>👍 = 1pt</span>
+              <span>💬 = 3pts</span>
+              <span>↩️ = 2pts</span>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Back to Channel */}
-      <div className="px-4 pb-8">
-        <button onClick={handleBackToChannel} className="btn-primary w-full">
-          {t('leaderboard.backToChannel')}
-        </button>
-      </div>
+      )}
     </div>
   )
 }
