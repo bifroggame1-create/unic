@@ -3,12 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { api, Event } from '../lib/api'
-import { useTranslation } from '../contexts/LanguageContext'
+import { t } from '../lib/translations'
 import Sticker from '../components/Sticker'
 
 export default function Events() {
   const router = useRouter()
-  const { t, language } = useTranslation()
+  // const { t, language } = useTranslation()
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +52,7 @@ export default function Events() {
     if (days === 0) return t('events.today')
     if (days === 1) return t('events.yesterday')
     if (days < 7) return `${days} ${t('events.daysAgo')}`
-    return d.toLocaleDateString(language === 'ru' ? 'ru-RU' : language === 'zh' ? 'zh-CN' : 'en-US')
+    return d.toLocaleDateString('en-US')
   }
 
   if (loading) {

@@ -2,16 +2,16 @@
 
 import { useState } from 'react'
 import Sticker, { StickerName } from '../components/Sticker'
-import { useTranslation, TranslationKey } from '../contexts/LanguageContext'
 import { useHaptic } from '../contexts/TelegramContext'
+import { t } from '../lib/translations'
 
 interface Package {
-  nameKey: TranslationKey
+  nameKey: string
   price: number
-  periodKey: TranslationKey | ''
+  periodKey: string | ''
   sticker: StickerName
-  featureKeys: TranslationKey[]
-  ctaKey: TranslationKey
+  featureKeys: string[]
+  ctaKey: string
   disabled: boolean
   popular: boolean
   gradient: string
@@ -76,9 +76,9 @@ const packages: Package[] = [
 ]
 
 export default function Packages() {
-  const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly')
-  const { t } = useTranslation()
   const haptic = useHaptic()
+  const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly')
+  
 
   const handleSubscribe = (pkg: Package) => {
     haptic.impact('medium')

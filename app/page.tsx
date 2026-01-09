@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { useTranslation } from './contexts/LanguageContext'
+import { t } from './lib/translations'
 import { useHaptic } from './contexts/TelegramContext'
 import Sticker from './components/Sticker'
 
@@ -13,7 +13,6 @@ import Sticker from './components/Sticker'
 
 export default function Home() {
   const router = useRouter()
-  const { t } = useTranslation()
   const haptic = useHaptic()
 
   const handlePress = (path: string) => {

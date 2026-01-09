@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { api, Channel } from '../../lib/api'
 import { useHaptic } from '../../contexts/TelegramContext'
-import { useTranslation } from '../../contexts/LanguageContext'
+import { t } from '../../lib/translations'
 import Sticker from '../../components/Sticker'
 
 const CheckIcon = () => (
@@ -18,7 +18,6 @@ const winnerCounts = [3, 5, 10, 20]
 export default function NewEvent() {
   const router = useRouter()
   const haptic = useHaptic()
-  const { t } = useTranslation()
   const [step, setStep] = useState(1)
   const [channels, setChannels] = useState<Channel[]>([])
   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null)

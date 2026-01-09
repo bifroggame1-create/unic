@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { api, Channel } from '../lib/api'
-import { useTranslation } from '../contexts/LanguageContext'
+import { t } from '../lib/translations'
 import { Modal, Button, Input } from '@telegram-apps/telegram-ui'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
@@ -22,7 +22,6 @@ const TrashIcon = () => (
 
 export default function Channels() {
   const router = useRouter()
-  const { t } = useTranslation()
   const [channels, setChannels] = useState<Channel[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

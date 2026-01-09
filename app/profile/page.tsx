@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation'
 import { api, UserStats } from '../lib/api'
 import { useTelegram } from '../contexts/TelegramContext'
 import { useTheme } from '../contexts/ThemeContext'
-import { useLanguage, useTranslation, Language } from '../contexts/LanguageContext'
+import { t } from '../lib/translations'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
 
-const LANGUAGES: { code: Language; label: string; flag: string }[] = [
+const LANGUAGES: { code: string; label: string; flag: string }[] = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
   { code: 'ru', label: 'Русский', flag: '🇷🇺' },
   { code: 'zh', label: '中文', flag: '🇨🇳' },
@@ -25,16 +25,14 @@ export default function Profile() {
   const router = useRouter()
   const { user: telegramUser } = useTelegram()
   const { theme, setTheme } = useTheme()
-  const { language, setLanguage } = useLanguage()
-  const { t } = useTranslation()
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
   const getThemeLabel = (themeItem: typeof THEMES[number]) => {
-    if (language === 'ru') return themeItem.labelRu
-    if (language === 'zh') return themeItem.labelZh
+    // if (language === 'ru') return themeItem.labelRu
+    // if (language === 'zh') return themeItem.labelZh
     return themeItem.label
   }
 

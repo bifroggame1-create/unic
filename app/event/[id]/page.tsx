@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { api, EventWithPositionResponse } from '../../lib/api'
 import { useTelegram } from '../../contexts/TelegramContext'
+import { t } from '../../lib/translations'
 import Sticker from '../../components/Sticker'
 
 export default function EventOverview() {
@@ -69,7 +70,7 @@ export default function EventOverview() {
     updateTimer()
     const timer = setInterval(updateTimer, 1000)
     return () => clearInterval(timer)
-  }, [data?.event.timeRemaining, t])
+  }, [data?.event.timeRemaining])
 
   const handleBoostPurchase = async (boostType: 'x2_24h' | 'x1.5_forever') => {
     try {

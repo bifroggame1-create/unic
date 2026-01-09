@@ -62,6 +62,7 @@ interface TelegramWebApp {
   showPopup: (params: { title?: string; message: string; buttons?: { type: string; text: string }[] }, callback?: (buttonId: string) => void) => void
   showAlert: (message: string, callback?: () => void) => void
   showConfirm: (message: string, callback?: (confirmed: boolean) => void) => void
+  openInvoice?: (url: string, callback?: (status: string) => void) => void
 }
 
 declare global {
