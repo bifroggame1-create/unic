@@ -76,6 +76,56 @@ const translations = {
     ru: 'Тарифы',
     zh: '套餐',
   },
+  'home.welcome': {
+    en: 'Welcome',
+    ru: 'Добро пожаловать',
+    zh: '欢迎',
+  },
+  'home.subtitle': {
+    en: 'Track your activity rewards',
+    ru: 'Отслеживайте награды за активность',
+    zh: '跟踪活动奖励',
+  },
+  'home.level': {
+    en: 'Level',
+    ru: 'Уровень',
+    zh: '等级',
+  },
+  'home.quickActions': {
+    en: 'Quick Actions',
+    ru: 'Быстрые действия',
+    zh: '快速操作',
+  },
+  'home.yourJourney': {
+    en: 'Your Journey',
+    ru: 'Ваш путь',
+    zh: '您的旅程',
+  },
+  'home.stats': {
+    en: 'Statistics',
+    ru: 'Статистика',
+    zh: '统计',
+  },
+  'home.events': {
+    en: 'Events',
+    ru: 'События',
+    zh: '活动',
+  },
+  'home.participants': {
+    en: 'Participants',
+    ru: 'Участники',
+    zh: '参与者',
+  },
+  'home.engagement': {
+    en: 'Engagement',
+    ru: 'Вовлечение',
+    zh: '参与度',
+  },
+  'home.upgradePlan': {
+    en: 'Upgrade Plan',
+    ru: 'Улучшить тариф',
+    zh: '升级套餐',
+  },
   'home.upgrade': {
     en: 'Upgrade',
     ru: 'Улучшить',
@@ -105,11 +155,6 @@ const translations = {
     en: 'Create First Event',
     ru: 'Создать первое событие',
     zh: '创建首个活动',
-  },
-  'home.participants': {
-    en: 'participants',
-    ru: 'участников',
-    zh: '参与者',
   },
   'home.winners': {
     en: 'winners',
@@ -1130,6 +1175,35 @@ const translations = {
     en: 'Terms',
     ru: 'Условия',
     zh: '条款',
+  },
+
+  // ════════════════════════════════════════════════════════════
+  // TIERS
+  // ════════════════════════════════════════════════════════════
+  'tiers.newbie': {
+    en: 'Newbie',
+    ru: 'Новичок',
+    zh: '新手',
+  },
+  'tiers.pro': {
+    en: 'Pro',
+    ru: 'Профи',
+    zh: '专业',
+  },
+  'tiers.legend': {
+    en: 'Legend',
+    ru: 'Легенда',
+    zh: '传奇',
+  },
+  'tiers.current': {
+    en: 'Current',
+    ru: 'Текущий',
+    zh: '当前',
+  },
+  'tiers.events': {
+    en: 'events',
+    ru: 'событий',
+    zh: '活动',
   },
 } as const
 

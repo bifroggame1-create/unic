@@ -11,42 +11,59 @@ const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
 // ═══════════════════════════════════════════════════════════════
 
 export const STICKERS = {
-  // PACKAGES - ПО ОДНОМУ ИЗ КАЖДОЙ ПАПКИ (5 разных типов)
-  giftFree: '/stickers/ui/0.json',           // Free - UI элемент
-  giftTrial: '/stickers/ducks/10.json',      // Trial - утка
-  giftBasic: '/stickers/gifts/0.json',       // Basic - подарок
-  giftAdvanced: '/stickers/locket/0.json',   // Advanced - сердце
-  giftPremium: '/stickers/mascot/5.json',    // Premium - особый маскот
+  // ═══════════════════════════════════════════════════════════════
+  // NARRATIVE UI - Unique story scenes
+  // ═══════════════════════════════════════════════════════════════
 
-  // TAB BAR - разные
-  tabHome: '/stickers/ducks/0.json',
-  tabEvents: '/stickers/gifts/10.json',
-  tabChannels: '/stickers/ducks/15.json',
-  tabPlans: '/stickers/gifts/15.json',
-  tabProfile: '/stickers/ducks/25.json',
+  // Home Screen Assets
+  'mascot/10': '/stickers/mascot/10.json',   // Header working
+  'mascot/20': '/stickers/mascot/20.json',   // New event
+  'mascot/30': '/stickers/mascot/30.json',   // My events
+  'mascot/40': '/stickers/mascot/40.json',   // Channels
+  'gifts/5': '/stickers/gifts/5.json',        // Plans
+  'mascot/50': '/stickers/mascot/50.json',   // Profile
+  'mascot/60': '/stickers/mascot/60.json',   // Stats
+  'mascot/70': '/stickers/mascot/70.json',   // No events
+  'ducks/5': '/stickers/ducks/5.json',        // Tier newbie
+  'ducks/45': '/stickers/ducks/45.json',      // Tier pro
+  'ducks/85': '/stickers/ducks/85.json',      // Tier legend
 
-  // FEATURE CARDS - все разные
+  // PACKAGES - 5 уникальных
+  giftFree: '/stickers/ui/0.json',
+  giftTrial: '/stickers/ducks/10.json',
+  giftBasic: '/stickers/gifts/0.json',
+  giftAdvanced: '/stickers/locket/0.json',
+  giftPremium: '/stickers/mascot/5.json',
+
+  // TAB BAR - Unique contextual scenes
+  tabHome: '/stickers/mascot/0.json',         // Home duck
+  tabEvents: '/stickers/ducks/1.json',        // Events duck
+  tabChannels: '/stickers/gifts/1.json',      // Channels gift
+  tabPlans: '/stickers/locket/1.json',        // Plans heart
+  tabProfile: '/stickers/ducks/2.json',       // Profile duck
+
+  // FEATURE CARDS
   cardNewEvent: '/stickers/gifts/20.json',
   cardMyEvents: '/stickers/ducks/30.json',
   cardChannels: '/stickers/ducks/35.json',
   cardPlans: '/stickers/locket/10.json',
   cardProfile: '/stickers/locket/15.json',
 
-  // ONBOARDING - Utya
-  onboard1: '/stickers/mascot/0.json',
-  onboard2: '/stickers/mascot/20.json',
-  onboard3: '/stickers/mascot/40.json',
-  onboard4: '/stickers/mascot/60.json',
+  // ONBOARDING
+  onboard1: '/stickers/mascot/1.json',
+  onboard2: '/stickers/mascot/21.json',
+  onboard3: '/stickers/mascot/41.json',
+  onboard4: '/stickers/mascot/61.json',
 
-  // SUPPORT & EMPTY - Utya
+  // SUPPORT & EMPTY
   support: '/stickers/mascot/80.json',
   noEvents: '/stickers/mascot/100.json',
   noChannels: '/stickers/mascot/110.json',
 
-  // UI
+  // UI STATES
   loading: '/stickers/ducks/40.json',
-  success: '/stickers/ducks/45.json',
-  error: '/stickers/ducks/50.json',
+  success: '/stickers/ducks/46.json',
+  error: '/stickers/ducks/51.json',
   warning: '/stickers/ui/10.json',
 
   // DECORATIONS
@@ -57,11 +74,11 @@ export const STICKERS = {
 
   // LEADERBOARD
   trophy: '/stickers/gifts/35.json',
-  medal: '/stickers/gifts/40.json',
-  crown: '/stickers/locket/30.json',
+  medal: '/stickers/gifts/41.json',
+  crown: '/stickers/locket/31.json',
 
   // HINTS
-  channelHint: '/stickers/ducks/55.json',
+  channelHint: '/stickers/ducks/56.json',
 } as const
 
 export type StickerName = keyof typeof STICKERS

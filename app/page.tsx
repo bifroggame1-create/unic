@@ -1,182 +1,328 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import Banner from './components/Banner'
-import FeatureCard from './components/FeatureCard'
-import SupportBanner from './components/SupportBanner'
-import Sticker from './components/Sticker'
-import Loading from './components/Loading'
-import { useTelegram, useHaptic } from './contexts/TelegramContext'
 import { useTranslation } from './contexts/LanguageContext'
-import { api, Event } from './lib/api'
+import { useHaptic } from './contexts/TelegramContext'
+import Sticker from './components/Sticker'
+
+// ═══════════════════════════════════════════════════════════════
+// NARRATIVE UI CONFIG - Each icon is a unique story scene
+// NO repetitive assets (no same caps in different colors!)
+// ═══════════════════════════════════════════════════════════════
+
+const ASSETS = {
+  // Header - User actively working
+  headerWorking: 'mascot/10' as const,
+
+  // Grid Menu - Unique contextual scenes
+  newEvent: 'mascot/20' as const,
+  myEvents: 'mascot/30' as const,
+  channels: 'mascot/40' as const,
+  plans: 'gifts/5' as const,
+
+  // Additional cards
+  profile: 'mascot/50' as const,
+  stats: 'mascot/60' as const,
+
+  // Tiers - Evolution of status
+  tierNewbie: 'ducks/5' as const,
+  tierPro: 'ducks/45' as const,
+  tierLegend: 'ducks/85' as const,
+
+  // Empty states
+  noEvents: 'mascot/70' as const,
+}
+
+const MotionButton = motion.button
+const MotionCard = motion.div
 
 export default function Home() {
   const router = useRouter()
-  const { user, isLoading } = useTelegram()
-  const haptic = useHaptic()
   const { t } = useTranslation()
-  const [events, setEvents] = useState<Event[]>([])
-  const [loadingEvents, setLoadingEvents] = useState(true)
+  const haptic = useHaptic()
 
-  // Banner slides with translations
-  const bannerSlides = [
-    {
-      sticker: 'banner' as const,
-      title: t('banner.stayUpdated'),
-      subtitle: t('banner.getNews'),
-    },
-    {
-      sticker: 'giftFree' as const,
-      title: t('banner.firstFree'),
-      subtitle: t('banner.tryUnic'),
-    },
-  ]
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const { events: fetchedEvents } = await api.getEvents()
-        setEvents(fetchedEvents)
-      } catch (error) {
-        console.error('Failed to fetch events:', error)
-      } finally {
-        setLoadingEvents(false)
-      }
-    }
-
-    if (!isLoading) {
-      fetchEvents()
-    }
-  }, [isLoading])
-
-  const activeEvents = events.filter(e => e.status === 'active')
-
-  const handleNavigate = (path: string) => {
+  const handlePress = (path: string) => {
     haptic.impact('light')
     router.push(path)
   }
 
-  const formatTimeLeft = (endsAt?: string) => {
-    if (!endsAt) return ''
-    const end = new Date(endsAt)
-    const now = new Date()
-    const diff = end.getTime() - now.getTime()
-
-    if (diff <= 0) return 'Ending...'
-
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-
-    if (hours > 24) {
-      const days = Math.floor(hours / 24)
-      return `${days}d ${hours % 24}h`
-    }
-
-    return `${hours}h ${minutes}m`
-  }
-
   return (
-    <div className="space-y-4 fade-in">
-      {/* Main Banner */}
-      <Banner slides={bannerSlides} />
-
-      {/* Support Banner */}
-      <SupportBanner
-        sticker="support"
-        title={t('banner.gotQuestions')}
-        subtitle={t('banner.reachOut') + ' — @unicsupport'}
-        href="https://t.me/unicsupport"
-      />
-
-      {/* Feature Grid */}
-      <div className="grid grid-cols-2 gap-3">
-        <FeatureCard
-          sticker="cardNewEvent"
-          title={t('home.newEvent')}
-          subtitle={t('home.launchNow')}
-          onClick={() => handleNavigate('/events/new')}
-        />
-        <FeatureCard
-          sticker="cardMyEvents"
-          title={t('home.myEvents')}
-          subtitle={t('home.viewAll')}
-          onClick={() => handleNavigate('/events')}
-        />
-        <FeatureCard
-          sticker="cardChannels"
-          title={t('home.myChannels')}
-          subtitle={t('home.manage')}
-          onClick={() => handleNavigate('/channels')}
-        />
-        <FeatureCard
-          sticker="cardPlans"
-          title={t('home.plans')}
-          subtitle={t('home.upgrade')}
-          onClick={() => handleNavigate('/packages')}
-        />
-        <FeatureCard
-          sticker="cardProfile"
-          title={t('home.profile')}
-          subtitle={t('home.yourStats')}
-          onClick={() => handleNavigate('/profile')}
-        />
-      </div>
-
-      {/* Active Events Section */}
-      <div className="mt-6">
-        <h3 className="font-semibold text-[var(--text-primary)] mb-3">{t('home.activeEvents')}</h3>
-
-        {loadingEvents ? (
-          <Loading text="" size={80} />
-        ) : activeEvents.length === 0 ? (
-          <div className="card p-6 text-center">
-            <div className="flex justify-center mb-3">
-              <Sticker name="noEvents" size={80} />
-            </div>
-            <p className="text-[var(--text-secondary)] text-sm">{t('home.noActiveEvents')}</p>
-            <button
-              onClick={() => handleNavigate('/events/new')}
-              className="btn-primary w-full mt-4"
+    <div className="min-h-screen pb-24 bg-gradient-to-b from-[var(--bg-start)] to-[var(--bg-end)]">
+      {/* Premium Header - Story Scene */}
+      <MotionCard
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 text-white p-6 rounded-b-[36px] mb-6 shadow-2xl shadow-blue-500/20"
+      >
+        <div className="flex items-center gap-4 mb-5">
+          <motion.div
+            className="w-24 h-24 flex-shrink-0"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+          >
+            <Sticker name={ASSETS.headerWorking} size={96} />
+          </motion.div>
+          <div className="flex-1">
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-3xl font-black tracking-tight mb-1"
             >
-              {t('home.createFirst')}
-            </button>
+              {t('home.welcome')}
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-sm text-white/80 font-medium"
+            >
+              {t('home.subtitle')}
+            </motion.p>
           </div>
-        ) : (
-          <div className="space-y-3">
-            {activeEvents.map((event) => (
-              <div
-                key={event._id}
-                onClick={() => handleNavigate(`/event/${event._id}`)}
-                className="card p-4 cursor-pointer hover:shadow-md transition-shadow"
+        </div>
+
+        {/* Progress Bar */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm font-semibold">
+            <span>{t('home.level')} 5 • Pro</span>
+            <span>600 / 1000 XP</span>
+          </div>
+          <div className="bg-white/20 rounded-full h-4 overflow-hidden backdrop-blur-sm border border-white/30">
+            <motion.div
+              className="bg-gradient-to-r from-white to-blue-100 h-full rounded-full shadow-lg"
+              initial={{ width: 0 }}
+              animate={{ width: '60%' }}
+              transition={{ duration: 1.2, ease: 'easeOut', delay: 0.5 }}
+            />
+          </div>
+        </div>
+      </MotionCard>
+
+      <div className="px-4 space-y-6">
+        {/* Grid Menu - 2x2 Unique Narrative Scenes */}
+        <section>
+          <h2 className="text-xl font-black text-[var(--text-primary)] mb-4">
+            {t('home.quickActions')}
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <MotionButton
+              whileTap={{ scale: 0.92 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => handlePress('/events/new')}
+              className="card p-5 flex flex-col items-center gap-3 hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-500/30"
+            >
+              <motion.div
+                initial={{ rotate: -10 }}
+                animate={{ rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 300 }}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
-                      <Sticker name="success" size={40} />
-                    </div>
-                    <div>
-                      <p className="font-medium text-[var(--text-primary)]">
-                        Event #{event._id.slice(-6)}
-                      </p>
-                      <p className="text-xs text-[var(--text-secondary)]">
-                        {event.participantsCount} {t('home.participants')}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-[var(--primary)]">
-                      {formatTimeLeft(event.endsAt)}
-                    </p>
-                    <p className="text-xs text-[var(--text-muted)]">
-                      {event.winnersCount} {t('home.winners')}
-                    </p>
-                  </div>
+                <Sticker name={ASSETS.newEvent} size={72} />
+              </motion.div>
+              <div className="text-center">
+                <span className="font-black text-base text-[var(--text-primary)] block">
+                  {t('home.newEvent')}
+                </span>
+                <span className="text-xs text-[var(--text-secondary)] font-medium">
+                  {t('home.launchNow')}
+                </span>
+              </div>
+            </MotionButton>
+
+            <MotionButton
+              whileTap={{ scale: 0.92 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => handlePress('/events')}
+              className="card p-5 flex flex-col items-center gap-3 hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-500/30"
+            >
+              <Sticker name={ASSETS.myEvents} size={72} />
+              <div className="text-center">
+                <span className="font-black text-base text-[var(--text-primary)] block">
+                  {t('home.myEvents')}
+                </span>
+                <span className="text-xs text-[var(--text-secondary)] font-medium">
+                  {t('home.viewAll')}
+                </span>
+              </div>
+            </MotionButton>
+
+            <MotionButton
+              whileTap={{ scale: 0.92 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => handlePress('/channels')}
+              className="card p-5 flex flex-col items-center gap-3 hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-500/30"
+            >
+              <Sticker name={ASSETS.channels} size={72} />
+              <div className="text-center">
+                <span className="font-black text-base text-[var(--text-primary)] block">
+                  {t('home.myChannels')}
+                </span>
+                <span className="text-xs text-[var(--text-secondary)] font-medium">
+                  {t('home.manage')}
+                </span>
+              </div>
+            </MotionButton>
+
+            <MotionButton
+              whileTap={{ scale: 0.92 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => handlePress('/packages')}
+              className="card p-5 flex flex-col items-center gap-3 hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-500/30 bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-900/10 dark:to-gray-800"
+            >
+              <Sticker name={ASSETS.plans} size={72} />
+              <div className="text-center">
+                <span className="font-black text-base text-emerald-600 dark:text-emerald-400 block">
+                  {t('home.plans')}
+                </span>
+                <span className="text-xs text-emerald-600/70 dark:text-emerald-400/70 font-medium">
+                  {t('home.upgrade')}
+                </span>
+              </div>
+            </MotionButton>
+          </div>
+        </section>
+
+        {/* Tiers Roadmap - Visual Evolution */}
+        <section>
+          <h2 className="text-xl font-black text-[var(--text-primary)] mb-4">
+            {t('home.yourJourney')}
+          </h2>
+          <div className="space-y-3">
+            {/* Tier 1 - Newbie (Completed) */}
+            <MotionCard
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="card p-4 flex items-center gap-4"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-gray-300 to-gray-400 rounded-2xl flex items-center justify-center shadow-lg">
+                <Sticker name={ASSETS.tierNewbie} size={48} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-black text-[var(--text-primary)]">{t('tiers.newbie')}</h3>
+                <p className="text-xs text-[var(--text-secondary)] font-medium">
+                  0 - 100 {t('tiers.events')}
+                </p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </MotionCard>
+
+            {/* Tier 2 - Pro (Current) */}
+            <MotionCard
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="card p-4 flex items-center gap-4 border-2 border-[var(--primary)] shadow-xl shadow-blue-500/20 bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/10 dark:to-gray-800"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
+                <Sticker name={ASSETS.tierPro} size={48} />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-black text-[var(--text-primary)]">{t('tiers.pro')}</h3>
+                  <span className="text-xs bg-[var(--primary)] text-white px-2 py-0.5 rounded-full font-bold">
+                    {t('tiers.current')}
+                  </span>
+                </div>
+                <p className="text-xs text-[var(--text-secondary)] font-medium mb-2">
+                  100 - 500 {t('tiers.events')}
+                </p>
+                <div className="bg-[var(--bg-start)] rounded-full h-2.5 overflow-hidden">
+                  <motion.div
+                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: '60%' }}
+                    transition={{ duration: 1, delay: 0.3 }}
+                  />
                 </div>
               </div>
-            ))}
+            </MotionCard>
+
+            {/* Tier 3 - Legend (Locked) */}
+            <MotionCard
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="card p-4 flex items-center gap-4 opacity-60"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl relative">
+                <Sticker name={ASSETS.tierLegend} size={48} />
+                <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-black text-[var(--text-primary)]">{t('tiers.legend')}</h3>
+                <p className="text-xs text-[var(--text-secondary)] font-medium">
+                  500+ {t('tiers.events')}
+                </p>
+              </div>
+            </MotionCard>
           </div>
-        )}
+        </section>
+
+        {/* Quick Stats - Premium Card */}
+        <section>
+          <MotionCard
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="card p-6 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-blue-900/10"
+          >
+            <h3 className="font-black text-[var(--text-primary)] mb-4 text-lg">
+              {t('home.stats')}
+            </h3>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.5, type: 'spring' }}
+                  className="text-3xl font-black bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent"
+                >
+                  12
+                </motion.div>
+                <div className="text-xs text-[var(--text-secondary)] font-semibold mt-1">
+                  {t('home.events')}
+                </div>
+              </div>
+              <div>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.6, type: 'spring' }}
+                  className="text-3xl font-black bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent"
+                >
+                  3.2K
+                </motion.div>
+                <div className="text-xs text-[var(--text-secondary)] font-semibold mt-1">
+                  {t('home.participants')}
+                </div>
+              </div>
+              <div>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.7, type: 'spring' }}
+                  className="text-3xl font-black bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent"
+                >
+                  89%
+                </motion.div>
+                <div className="text-xs text-[var(--text-secondary)] font-semibold mt-1">
+                  {t('home.engagement')}
+                </div>
+              </div>
+            </div>
+          </MotionCard>
+        </section>
       </div>
     </div>
   )
