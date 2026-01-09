@@ -46,11 +46,32 @@ class ApiClient {
     this.telegramId = id
   }
 
+  // Helper to safely encode URL parameters
+  private encodeQueryParam(value: string | number): string {
+    return encodeURIComponent(String(value))
+  }
+
+  // Helper to build safe URLs with query params
+  private buildUrl(path: string, params?: Record<string, string | number>): string {
+    if (!params) return path
+
+    const queryString = Object.entries(params)
+      .map(([key, value]) => `${this.encodeQueryParam(key)}=${this.encodeQueryParam(value)}`)
+      .join('&')
+
+    return `${path}?${queryString}`
+  }
+
   async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const { method = 'GET', body } = options
 
     // Use dev ID if no telegram ID set (dev mode)
     const userId = this.telegramId || DEV_USER_ID
+
+    // Validate userId is a positive integer
+    if (!Number.isInteger(userId) || userId <= 0) {
+      throw new Error('Invalid user ID')
+    }
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -98,14 +119,23 @@ class ApiClient {
   }
 
   async addChannel(username: string) {
+    // Validate and sanitize username
+    if (!username || typeof username !== 'string') throw new Error('Invalid username')
+
+    // Remove any potentially malicious characters
+    const sanitized = username.trim().replace(/[<>'"]/g, '').slice(0, 100)
+    if (!sanitized) throw new Error('Invalid username format')
+
     return this.request<{ channel: Channel }>('/api/channels', {
       method: 'POST',
-      body: { username },
+      body: { username: sanitized },
     })
   }
 
   async deleteChannel(id: string) {
-    return this.request<{ success: boolean }>(`/api/channels/${id}`, {
+    if (!id || typeof id !== 'string') throw new Error('Invalid channel ID')
+
+    return this.request<{ success: boolean }>(`/api/channels/${this.encodeQueryParam(id)}`, {
       method: 'DELETE',
     })
   }
@@ -116,10 +146,24 @@ class ApiClient {
   }
 
   async getEvent(id: string) {
-    return this.request<{ event: Event }>(`/api/events/${id}`)
+    if (!id || typeof id !== 'string') throw new Error('Invalid event ID')
+    return this.request<{ event: Event }>(`/api/events/${this.encodeQueryParam(id)}`)
   }
 
   async createEvent(data: CreateEventData) {
+    // Validate required fields
+    if (!data.channelId || !Number.isInteger(data.channelId)) throw new Error('Invalid channel ID')
+    if (!['24h', '48h', '72h', '7d'].includes(data.duration)) throw new Error('Invalid duration')
+    if (!['reactions', 'comments', 'all'].includes(data.activityType)) throw new Error('Invalid activity type')
+    if (!Number.isInteger(data.winnersCount) || data.winnersCount < 1 || data.winnersCount > 100) {
+      throw new Error('Invalid winners count')
+    }
+
+    // Sanitize optional title
+    if (data.title) {
+      data.title = data.title.trim().replace(/[<>]/g, '').slice(0, 200)
+    }
+
     return this.request<{ event: Event }>('/api/events', {
       method: 'POST',
       body: data,
@@ -127,37 +171,52 @@ class ApiClient {
   }
 
   async activateEvent(id: string) {
-    return this.request<{ event: Event }>(`/api/events/${id}/activate`, {
+    if (!id || typeof id !== 'string') throw new Error('Invalid event ID')
+    return this.request<{ event: Event }>(`/api/events/${this.encodeQueryParam(id)}/activate`, {
       method: 'POST',
     })
   }
 
   async completeEvent(id: string) {
-    return this.request<{ event: Event }>(`/api/events/${id}/complete`, {
+    if (!id || typeof id !== 'string') throw new Error('Invalid event ID')
+    return this.request<{ event: Event }>(`/api/events/${this.encodeQueryParam(id)}/complete`, {
       method: 'POST',
     })
   }
 
   async getLeaderboard(id: string, limit = 50, offset = 0) {
-    return this.request<LeaderboardResponse>(
-      `/api/events/${id}/leaderboard?limit=${limit}&offset=${offset}`
-    )
+    // Validate inputs
+    if (!id || typeof id !== 'string') throw new Error('Invalid event ID')
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new Error('Invalid limit')
+    if (!Number.isInteger(offset) || offset < 0) throw new Error('Invalid offset')
+
+    const url = this.buildUrl(`/api/events/${this.encodeQueryParam(id)}/leaderboard`, { limit, offset })
+    return this.request<LeaderboardResponse>(url)
   }
 
   async getMyPosition(eventId: string) {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+
     const userId = this.telegramId || DEV_USER_ID
-    return this.request<{ position: UserPosition | null }>(`/api/events/${eventId}/position?userId=${userId}`)
+    const url = this.buildUrl(`/api/events/${this.encodeQueryParam(eventId)}/position`, { userId })
+    return this.request<{ position: UserPosition | null }>(url)
   }
 
   async getEventWithPosition(id: string) {
+    if (!id || typeof id !== 'string') throw new Error('Invalid event ID')
+
     const userId = this.telegramId || DEV_USER_ID
-    return this.request<EventWithPositionResponse>(`/api/events/${id}?userId=${userId}`)
+    const url = this.buildUrl(`/api/events/${this.encodeQueryParam(id)}`, { userId })
+    return this.request<EventWithPositionResponse>(url)
   }
 
   async createBoostInvoice(eventId: string, boostType: 'x2_24h' | 'x1.5_forever') {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+    if (!['x2_24h', 'x1.5_forever'].includes(boostType)) throw new Error('Invalid boost type')
+
     const userId = this.telegramId || DEV_USER_ID
     return this.request<{ invoiceLink: string; paymentId: string; amount: number }>(
-      `/api/events/${eventId}/boost/invoice`,
+      `/api/events/${this.encodeQueryParam(eventId)}/boost/invoice`,
       {
         method: 'POST',
         body: { userId, boostType },
@@ -166,16 +225,22 @@ class ApiClient {
   }
 
   async applyBoost(eventId: string, paymentId: string) {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+    if (!paymentId || typeof paymentId !== 'string') throw new Error('Invalid payment ID')
+
     const userId = this.telegramId || DEV_USER_ID
-    return this.request<BoostResponse>(`/api/events/${eventId}/boost/apply`, {
+    return this.request<BoostResponse>(`/api/events/${this.encodeQueryParam(eventId)}/boost/apply`, {
       method: 'POST',
       body: { userId, paymentId },
     })
   }
 
   async getActivityTimeline(eventId: string) {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+
     const userId = this.telegramId || DEV_USER_ID
-    return this.request<TimelineResponse>(`/api/events/${eventId}/timeline?userId=${userId}`)
+    const url = this.buildUrl(`/api/events/${this.encodeQueryParam(eventId)}/timeline`, { userId })
+    return this.request<TimelineResponse>(url)
   }
 
   async getGifts() {
@@ -183,8 +248,10 @@ class ApiClient {
   }
 
   async createEventPayment(eventId: string) {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+
     return this.request<{ invoiceLink: string; paymentId: string; amount: number; packageName: string }>(
-      `/api/events/${eventId}/payment`,
+      `/api/events/${this.encodeQueryParam(eventId)}/payment`,
       { method: 'POST' }
     )
   }
