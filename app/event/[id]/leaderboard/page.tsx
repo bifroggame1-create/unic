@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { api, LeaderboardResponse } from '../../../lib/api'
 import { useTelegram } from '../../../contexts/TelegramContext'
-import { useTranslation } from '../../../contexts/LanguageContext'
 import Sticker from '../../../components/Sticker'
 
 export default function FullLeaderboard() {
@@ -12,7 +11,6 @@ export default function FullLeaderboard() {
   const router = useRouter()
   const eventId = params?.id as string
   const { webApp } = useTelegram()
-  const { t } = useTranslation()
 
   const [data, setData] = useState<LeaderboardResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -56,12 +54,10 @@ export default function FullLeaderboard() {
     }
   }, [eventId, offset, data])
 
-  // Initial load
   useEffect(() => {
     fetchLeaderboard(true)
   }, [eventId])
 
-  // Infinite scroll observer
   useEffect(() => {
     if (loadMoreRef.current && hasMore && !loading && !loadingMore) {
       observerRef.current = new IntersectionObserver(
@@ -85,7 +81,7 @@ export default function FullLeaderboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <Sticker name="loading" size={120} />
       </div>
     )
@@ -93,10 +89,10 @@ export default function FullLeaderboard() {
 
   if (!data) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-center">
-          <div className="text-4xl mb-4">🔍</div>
-          <p className="text-[var(--text-secondary)]">{t('leaderboard.eventNotFound')}</p>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center space-y-4">
+          <div className="text-6xl">🔍</div>
+          <p className="text-[var(--text-secondary)] text-lg">Event not found</p>
         </div>
       </div>
     )
@@ -106,38 +102,44 @@ export default function FullLeaderboard() {
   const isActive = event.status === 'active'
 
   return (
-    <div className="fade-in pb-8 -mx-4">
+    <div className="fade-in pb-12 -mx-4">
       {/* Header */}
-      <div className={`bg-gradient-to-b ${isActive ? 'from-[var(--primary)] to-[var(--primary-dark)]' : 'from-gray-600 to-gray-500'} text-white px-4 pt-4 pb-6 rounded-b-3xl sticky top-0 z-10`}>
+      <div className={`relative overflow-hidden ${isActive ? 'bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500' : 'bg-gradient-to-br from-gray-600 to-gray-800'} text-white px-6 pt-6 pb-10 shadow-2xl sticky top-0 z-10`}>
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+
         <button
           onClick={() => router.back()}
-          className="mb-4 flex items-center gap-2 text-white/80 hover:text-white"
+          className="relative mb-4 flex items-center gap-2 text-white/90 hover:text-white font-semibold transition-colors"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
           Back
         </button>
 
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-1">
-            {t('leaderboard.fullLeaderboard')}
+        <div className="relative text-center space-y-3">
+          <div className="text-5xl animate-bounce-slow">🏆</div>
+          <h1 className="text-3xl font-black tracking-tight">
+            Full Leaderboard
           </h1>
-          <p className="text-white/80 text-sm">
-            {totalParticipants} {t('leaderboard.participants')}
+          <p className="text-white/90 text-base font-semibold">
+            {totalParticipants} Participants
           </p>
         </div>
       </div>
 
       {/* Leaderboard */}
-      <div className="px-4 mt-6">
+      <div className="px-6 mt-6">
         {leaderboard.length === 0 ? (
-          <div className="card p-8 text-center">
-            <Sticker name="noEvents" size={100} className="mx-auto mb-3" />
-            <p className="text-sm text-[var(--text-muted)]">{t('leaderboard.noParticipants')}</p>
+          <div className="card p-12 text-center space-y-4">
+            <Sticker name="noEvents" size={120} className="mx-auto" />
+            <p className="text-base text-[var(--text-muted)] font-medium">No participants yet</p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {leaderboard.map((user) => {
               const isTop3 = user.rank <= 3
               const isWinner = user.rank <= (event.winnersCount || 0)
@@ -145,35 +147,35 @@ export default function FullLeaderboard() {
               return (
                 <div
                   key={user.telegramId}
-                  className={`card p-4 flex items-center justify-between ${
+                  className={`card p-5 flex items-center justify-between transition-all duration-300 hover:scale-[1.02] shadow-lg ${
                     isTop3
-                      ? 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-200'
+                      ? 'bg-gradient-to-r from-yellow-50/80 via-orange-50/80 to-red-50/80 dark:from-yellow-900/20 dark:via-orange-900/20 dark:to-red-900/20 border-2 border-yellow-300'
                       : isWinner
-                        ? 'bg-green-50 dark:bg-green-900/10 border-green-200'
-                        : ''
+                        ? 'bg-green-50/80 dark:bg-green-900/10 border-2 border-green-300'
+                        : 'border-2 border-transparent hover:border-[var(--primary)]/30'
                   }`}
                 >
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 ${
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shadow-md flex-shrink-0 ${
                       user.rank === 1
-                        ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white'
+                        ? 'bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 text-white'
                         : user.rank === 2
-                          ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white'
+                          ? 'bg-gradient-to-br from-gray-200 via-gray-300 to-gray-500 text-white'
                           : user.rank === 3
-                            ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white'
-                            : 'bg-[var(--bg-start)] text-[var(--text-secondary)]'
+                            ? 'bg-gradient-to-br from-orange-400 via-orange-600 to-orange-700 text-white'
+                            : 'bg-[var(--bg-start)] text-[var(--text-secondary)] border-2 border-[var(--border-color)]'
                     }`}>
                       {user.rank}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-sm text-[var(--text-primary)] truncate">
-                        {user.firstName || user.username || t('leaderboard.anonymous')}
+                      <p className="font-bold text-base text-[var(--text-primary)] truncate">
+                        {user.firstName || user.username || 'Anonymous'}
                       </p>
                       {user.username && (
-                        <p className="text-xs text-[var(--text-muted)] truncate">@{user.username}</p>
+                        <p className="text-sm text-[var(--text-muted)] truncate font-medium">@{user.username}</p>
                       )}
-                      <div className="flex gap-3 text-xs text-[var(--text-secondary)] mt-1">
+                      <div className="flex gap-3 text-sm text-[var(--text-secondary)] mt-1 font-semibold">
                         <span>👍 {user.reactionsCount}</span>
                         <span>💬 {user.commentsCount}</span>
                       </div>
@@ -182,14 +184,14 @@ export default function FullLeaderboard() {
 
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <div className="text-right">
-                      <div className="font-bold text-[var(--text-primary)]">
+                      <div className="font-black text-lg text-[var(--text-primary)]">
                         {user.points.toLocaleString()}
                       </div>
-                      <div className="text-xs text-[var(--text-muted)]">
-                        {t('leaderboard.pts')}
+                      <div className="text-xs text-[var(--text-muted)] font-bold">
+                        pts
                       </div>
                     </div>
-                    {isTop3 && <Sticker name="medal" size={24} />}
+                    {isTop3 && <Sticker name="medal" size={28} />}
                   </div>
                 </div>
               )
@@ -206,23 +208,34 @@ export default function FullLeaderboard() {
 
         {/* End of list */}
         {!hasMore && leaderboard.length > 0 && (
-          <div className="py-8 text-center text-sm text-[var(--text-muted)]">
-            {t('leaderboard.endOfList')}
+          <div className="py-8 text-center">
+            <p className="text-sm text-[var(--text-muted)] font-semibold">
+              You've reached the end 🎉
+            </p>
           </div>
         )}
       </div>
 
       {/* Scoring rules */}
       {isActive && (
-        <div className="px-4 mt-6">
-          <div className="card p-4 bg-[var(--bg-start)]">
-            <p className="text-xs text-[var(--text-secondary)] text-center mb-2">
-              {t('leaderboard.scoringRules')}
+        <div className="px-6 mt-6">
+          <div className="card p-6 bg-gradient-to-br from-[var(--bg-start)] to-[var(--bg-end)] shadow-lg">
+            <p className="text-sm text-[var(--text-secondary)] text-center mb-3 font-bold uppercase tracking-wide">
+              Scoring Rules
             </p>
-            <div className="flex justify-center gap-6 text-xs text-[var(--text-muted)]">
-              <span>👍 = 1pt</span>
-              <span>💬 = 3pts</span>
-              <span>↩️ = 2pts</span>
+            <div className="flex justify-center gap-8 text-sm font-bold">
+              <span className="flex items-center gap-2">
+                <span className="text-2xl">👍</span>
+                <span className="text-[var(--text-primary)]">1pt</span>
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-2xl">💬</span>
+                <span className="text-[var(--text-primary)]">3pts</span>
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-2xl">↩️</span>
+                <span className="text-[var(--text-primary)]">2pts</span>
+              </span>
             </div>
           </div>
         </div>
