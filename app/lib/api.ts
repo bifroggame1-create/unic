@@ -154,11 +154,22 @@ class ApiClient {
     return this.request<EventWithPositionResponse>(`/api/events/${id}?userId=${userId}`)
   }
 
-  async purchaseBoost(eventId: string, boostType: 'x2_24h' | 'x1.5_forever', starsPaid: number) {
+  async createBoostInvoice(eventId: string, boostType: 'x2_24h' | 'x1.5_forever') {
     const userId = this.telegramId || DEV_USER_ID
-    return this.request<BoostResponse>(`/api/events/${eventId}/boost`, {
+    return this.request<{ invoiceLink: string; paymentId: string; amount: number }>(
+      `/api/events/${eventId}/boost/invoice`,
+      {
+        method: 'POST',
+        body: { userId, boostType },
+      }
+    )
+  }
+
+  async applyBoost(eventId: string, paymentId: string) {
+    const userId = this.telegramId || DEV_USER_ID
+    return this.request<BoostResponse>(`/api/events/${eventId}/boost/apply`, {
       method: 'POST',
-      body: { userId, boostType, starsPaid },
+      body: { userId, paymentId },
     })
   }
 

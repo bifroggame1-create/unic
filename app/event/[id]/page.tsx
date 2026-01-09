@@ -77,15 +77,31 @@ export default function EventOverview() {
 
   const handleBoostPurchase = async (boostType: 'x2_24h' | 'x1.5_forever') => {
     try {
-      // TODO: Integrate Telegram Stars payment
-      // For now, just call the API with a mock payment
-      const starsPaid = boostType === 'x2_24h' ? 100 : 200
-      await api.purchaseBoost(eventId, boostType, starsPaid)
       setShowBoostModal(false)
-      fetchData() // Refresh to show new boost status
-      webApp?.showAlert('Boost activated!')
+
+      // Create invoice
+      const { invoiceLink, paymentId } = await api.createBoostInvoice(eventId, boostType)
+
+      // Open Telegram Stars payment
+      webApp?.openInvoice(invoiceLink, async (status) => {
+        if (status === 'paid') {
+          // Payment successful, apply boost
+          try {
+            await api.applyBoost(eventId, paymentId)
+            fetchData() // Refresh to show new boost status
+            webApp?.showAlert('Boost activated successfully!')
+          } catch (error: any) {
+            webApp?.showAlert(error.message || 'Failed to activate boost')
+          }
+        } else if (status === 'cancelled') {
+          webApp?.showAlert('Payment cancelled')
+        } else if (status === 'failed') {
+          webApp?.showAlert('Payment failed')
+        }
+      })
     } catch (error: any) {
-      webApp?.showAlert(error.message || 'Failed to purchase boost')
+      webApp?.showAlert(error.message || 'Failed to create invoice')
+      setShowBoostModal(true) // Reopen modal on error
     }
   }
 
