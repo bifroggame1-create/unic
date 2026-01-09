@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
+import "@telegram-apps/telegram-ui/dist/styles.css"
 import { Providers } from "./providers"
 
 export const metadata: Metadata = {

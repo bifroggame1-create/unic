@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { api, Channel } from '../lib/api'
 import { useTranslation } from '../contexts/LanguageContext'
+import { Modal, Button, Input } from '@telegram-apps/telegram-ui'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
 
@@ -114,12 +115,12 @@ export default function Channels() {
     <div className="fade-in px-3">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-lg font-bold text-[var(--text-primary)]">{t('channels.title')}</h1>
-        <button
+        <Button
+          size="s"
           onClick={() => setShowAddModal(true)}
-          className="btn-primary text-xs py-2 px-4 flex items-center justify-center whitespace-nowrap min-h-0"
         >
           {t('channels.addChannel')}
-        </button>
+        </Button>
       </div>
 
       {/* Info banner */}
@@ -148,12 +149,13 @@ export default function Channels() {
           <p className="text-sm text-[var(--text-secondary)] mb-4">
             {t('channels.connectFirstChannel')}
           </p>
-          <button
+          <Button
+            size="l"
+            stretched
             onClick={() => setShowAddModal(true)}
-            className="btn-primary"
           >
             {t('channels.add')}
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="space-y-3">
@@ -203,50 +205,52 @@ export default function Channels() {
         </div>
       )}
 
-      {/* Add Channel Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--card-bg)] rounded-2xl p-6 w-full max-w-sm">
-            <h2 className="text-lg font-bold text-[var(--text-primary)] mb-4">{t('channels.add')}</h2>
+      {/* Add Channel Modal - TelegramUI */}
+      <Modal
+        open={showAddModal}
+        onOpenChange={(open) => {
+          setShowAddModal(open)
+          if (!open) {
+            setUsername('')
+            setAddError(null)
+          }
+        }}
+        header={<Modal.Header>{t('channels.add')}</Modal.Header>}
+      >
+        <div className="space-y-4">
+          <Input
+            header={t('channels.channelUsername')}
+            placeholder="@mychannel"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            status={addError ? 'error' : 'default'}
+          />
+          {addError && (
+            <p className="text-sm text-[var(--tgui--destructive_text_color)]">{addError}</p>
+          )}
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                {t('channels.channelUsername')}
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="@mychannel"
-                className="w-full px-4 py-3 border border-[var(--card-border)] bg-[var(--bg-start)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-              />
-              {addError && (
-                <p className="text-sm text-[var(--error)] mt-2">{addError}</p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Button
+              size="l"
+              stretched
+              onClick={handleAddChannel}
+              disabled={adding || !username.trim()}
+              loading={adding}
+            >
+              {adding ? t('common.adding') : t('common.add')}
+            </Button>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowAddModal(false)
-                  setUsername('')
-                  setAddError(null)
-                }}
-                className="flex-1 py-3 rounded-xl border border-[var(--card-border)] text-[var(--text-secondary)] font-medium"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                onClick={handleAddChannel}
-                disabled={adding || !username.trim()}
-                className="flex-1 btn-primary disabled:opacity-50"
-              >
-                {adding ? t('common.adding') : t('common.add')}
-              </button>
-            </div>
+            <Button
+              size="l"
+              stretched
+              mode="gray"
+              onClick={() => setShowAddModal(false)}
+            >
+              {t('common.cancel')}
+            </Button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   )
 }
