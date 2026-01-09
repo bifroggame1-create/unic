@@ -185,7 +185,7 @@ export default function EventOverview() {
             {isWinning && (
               <div className="bg-yellow-400/20 rounded-xl p-3 text-center">
                 <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300">
-                  🏆 {t('leaderboard.youAreWinning')}
+                  🏆 You're in winning position!
                 </p>
               </div>
             )}
