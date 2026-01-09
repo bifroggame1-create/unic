@@ -101,13 +101,13 @@ export default function Home() {
         </div>
       </MotionCard>
 
-      <div className="px-4 space-y-6">
+      <div className="px-6 space-y-8">
         {/* Grid Menu - 2x2 Unique Narrative Scenes */}
         <section>
-          <h2 className="text-xl font-black text-[var(--text-primary)] mb-4">
+          <h2 className="text-xl font-black text-[var(--text-primary)] mb-5">
             {t('home.quickActions')}
           </h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-5">
             <MotionButton
               whileTap={{ scale: 0.92 }}
               whileHover={{ scale: 1.02 }}

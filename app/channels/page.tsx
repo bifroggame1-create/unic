@@ -111,12 +111,12 @@ export default function Channels() {
   }
 
   return (
-    <div className="fade-in">
+    <div className="fade-in px-1">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">{t('channels.title')}</h1>
         <button
           onClick={() => setShowAddModal(true)}
-          className="btn-primary text-sm py-2 px-4"
+          className="btn-primary text-sm py-2.5 px-5 flex items-center justify-center whitespace-nowrap"
         >
           {t('channels.addChannel')}
         </button>
