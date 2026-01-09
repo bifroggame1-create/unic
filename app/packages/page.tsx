@@ -78,7 +78,7 @@ const packages: Package[] = [
 
 export default function Packages() {
   const haptic = useHaptic()
-  const telegram = useTelegram()
+  const { webApp } = useTelegram()
   const userFriendlyAddress = useTonAddress()
   const [tonConnectUI] = useTonConnectUI()
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly')
@@ -91,13 +91,13 @@ export default function Packages() {
 
     // Free plan - no payment needed
     if (pkg.price === 0) {
-      telegram?.showAlert('You are already on the free plan')
+      webApp?.showAlert('You are already on the free plan')
       return
     }
 
     // Check if wallet is connected
     if (!userFriendlyAddress) {
-      telegram?.showAlert('Please connect your TON wallet first (top right corner)')
+      webApp?.showAlert('Please connect your TON wallet first (top right corner)')
       return
     }
 
@@ -121,7 +121,7 @@ export default function Packages() {
       // Send transaction
       await tonConnectUI.sendTransaction(transaction)
 
-      telegram?.showAlert('Payment sent! Your plan will be activated shortly.')
+      webApp?.showAlert('Payment sent! Your plan will be activated shortly.')
       haptic.notification('success')
 
       // TODO: Backend verification and plan activation
@@ -130,9 +130,9 @@ export default function Packages() {
     } catch (error: any) {
       console.error('Payment error:', error)
       if (error.message?.includes('reject')) {
-        telegram?.showAlert('Payment cancelled')
+        webApp?.showAlert('Payment cancelled')
       } else {
-        telegram?.showAlert('Payment failed. Please try again.')
+        webApp?.showAlert('Payment failed. Please try again.')
       }
       haptic.notification('error')
     } finally {
