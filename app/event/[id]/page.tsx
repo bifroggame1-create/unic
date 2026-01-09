@@ -6,34 +6,115 @@ import { api, EventWithPositionResponse } from '../../lib/api'
 import { useTelegram } from '../../contexts/TelegramContext'
 import { t } from '../../lib/translations'
 import Sticker from '../../components/Sticker'
+import BoostModal from '../../components/BoostModal'
+import SecondChanceModal from '../../components/SecondChanceModal'
+import { shouldShowBoost, type BoostTriggerInput } from '../../lib/boostConfig'
+import { shouldShowSecondChance, type SecondChanceInput } from '../../lib/secondChanceConfig'
+import { trackEvent } from '../../lib/analytics'
 
 export default function EventOverview() {
   const params = useParams()
   const router = useRouter()
   const eventId = params?.id as string
-  const { webApp } = useTelegram()
+  const { webApp, user } = useTelegram()
 
   const [data, setData] = useState<EventWithPositionResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [timeLeft, setTimeLeft] = useState('')
   const [showBoostModal, setShowBoostModal] = useState(false)
+  const [showSecondChanceModal, setShowSecondChanceModal] = useState(false)
+  const [lastBoostPromptAt, setLastBoostPromptAt] = useState<number | undefined>(undefined)
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false)
 
   const fetchData = useCallback(async () => {
     try {
       const response = await api.getEventWithPosition(eventId)
       setData(response)
+
+      // Track event view
+      if (user?.id) {
+        trackEvent('event_viewed', eventId, user.id)
+      }
     } catch (error) {
       console.error('Failed to fetch event:', error)
     } finally {
       setLoading(false)
     }
-  }, [eventId])
+  }, [eventId, user?.id])
 
   useEffect(() => {
     fetchData()
     const interval = setInterval(fetchData, 30000)
     return () => clearInterval(interval)
   }, [fetchData])
+
+  // Check Boost trigger conditions
+  useEffect(() => {
+    if (!data || !user?.id || !data.userPosition) return
+
+    const { event, userPosition } = data
+    if (event.status !== 'active') return
+
+    // Calculate next rank points gap
+    const nextRankPoints = Math.max(0, userPosition.points - (userPosition.rank > 1 ? 1 : 0))
+
+    // Calculate hours left
+    const hoursLeft = event.timeRemaining
+      ? event.timeRemaining.totalMs / (1000 * 60 * 60)
+      : 0
+
+    // User actions count (reactions + comments)
+    const userActionsCount = (data.userPosition?.rank || 999) < 100 ? 5 : 0 // Simplified for now
+
+    const boostInput: BoostTriggerInput = {
+      userRank: userPosition.rank,
+      totalUsers: userPosition.totalParticipants,
+      pointsToNextRank: nextRankPoints,
+      hoursLeft,
+      userActionsCount,
+      lastBoostPromptAt,
+    }
+
+    if (shouldShowBoost(boostInput) && !showBoostModal) {
+      setShowBoostModal(true)
+      setLastBoostPromptAt(Date.now())
+      trackEvent('boost_shown', eventId, user.id)
+    }
+  }, [data, user?.id, lastBoostPromptAt, showBoostModal, eventId])
+
+  // Check Second Chance trigger conditions
+  useEffect(() => {
+    if (!data || !user?.id || !data.userPosition) return
+
+    const { event, userPosition } = data
+    if (event.status !== 'completed') return
+
+    // Calculate points to prize rank
+    const lastPrizeRank = event.winnersCount
+    const pointsToPrizeRank = userPosition.rank > lastPrizeRank ? 15 : 0 // Simplified
+
+    // Minutes since event end
+    const minutesSinceEventEnd = event.endsAt
+      ? (Date.now() - new Date(event.endsAt).getTime()) / (1000 * 60)
+      : 999
+
+    // User actions count
+    const userActionsCount = (userPosition?.rank || 999) < 100 ? 5 : 0 // Simplified
+
+    const secondChanceInput: SecondChanceInput = {
+      userRank: userPosition.rank,
+      totalUsers: userPosition.totalParticipants,
+      pointsToPrizeRank,
+      userActionsCount,
+      minutesSinceEventEnd,
+      alreadyUsed: secondChanceUsed,
+    }
+
+    if (shouldShowSecondChance(secondChanceInput) && !showSecondChanceModal) {
+      setShowSecondChanceModal(true)
+      trackEvent('second_chance_shown', eventId, user.id)
+    }
+  }, [data, user?.id, secondChanceUsed, showSecondChanceModal, eventId])
 
   useEffect(() => {
     if (!data?.event.timeRemaining) return
@@ -72,31 +153,19 @@ export default function EventOverview() {
     return () => clearInterval(timer)
   }, [data?.event.timeRemaining])
 
-  const handleBoostPurchase = async (boostType: 'x2_24h' | 'x1.5_forever') => {
-    try {
-      setShowBoostModal(false)
+  const handleBoostPurchase = async () => {
+    // Will be implemented with Telegram Stars payment
+    // For now just placeholder
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    fetchData()
+  }
 
-      const { invoiceLink, paymentId } = await api.createBoostInvoice(eventId, boostType)
-
-      webApp?.openInvoice?.(invoiceLink, async (status: string) => {
-        if (status === 'paid') {
-          try {
-            await api.applyBoost(eventId, paymentId)
-            fetchData()
-            webApp?.showAlert('Boost activated successfully!')
-          } catch (error: any) {
-            webApp?.showAlert(error.message || 'Failed to activate boost')
-          }
-        } else if (status === 'cancelled') {
-          webApp?.showAlert('Payment cancelled')
-        } else if (status === 'failed') {
-          webApp?.showAlert('Payment failed')
-        }
-      })
-    } catch (error: any) {
-      webApp?.showAlert(error.message || 'Failed to create invoice')
-      setShowBoostModal(true)
-    }
+  const handleSecondChancePurchase = async () => {
+    // Will be implemented with Telegram Stars payment
+    // For now just placeholder
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    setSecondChanceUsed(true)
+    fetchData()
   }
 
   if (loading) {
@@ -330,88 +399,22 @@ export default function EventOverview() {
         )}
       </div>
 
-      {/* Boost CTA */}
-      {isActive && event.boostsEnabled && (
-        <div className="px-6 mb-8">
-          <button
-            onClick={() => setShowBoostModal(true)}
-            className="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 text-white rounded-3xl p-6 flex items-center justify-between shadow-2xl hover:shadow-purple-500/50 active:scale-[0.98] transition-all duration-300"
-          >
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-white/30 rounded-2xl flex items-center justify-center text-3xl backdrop-blur-sm shadow-lg">
-                ⚡
-              </div>
-              <div className="text-left">
-                <div className="font-black text-xl">Boost Your Points</div>
-                <div className="text-base opacity-90 font-medium">Get ahead of the competition</div>
-              </div>
-            </div>
-            <svg className="w-8 h-8 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      )}
+      {/* Modals */}
+      <BoostModal
+        isOpen={showBoostModal}
+        onClose={() => setShowBoostModal(false)}
+        eventId={eventId}
+        userId={user?.id || 0}
+        onPurchase={handleBoostPurchase}
+      />
 
-      {/* Boost Modal */}
-      {showBoostModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center animate-fadeIn" onClick={() => setShowBoostModal(false)}>
-          <div className="bg-[var(--card-bg)] w-full max-w-[480px] rounded-t-3xl p-8 animate-slideUp shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="text-center mb-8 space-y-3">
-              <div className="text-6xl animate-bounce-slow">⚡</div>
-              <h3 className="text-2xl font-black text-[var(--text-primary)]">Choose Your Boost</h3>
-              <p className="text-base text-[var(--text-secondary)] font-medium">Multiply your points and climb faster!</p>
-            </div>
-
-            <div className="space-y-4 mb-8">
-              <button
-                onClick={() => handleBoostPurchase('x2_24h')}
-                className="w-full card p-6 text-left hover:scale-[1.02] transition-all duration-300 border-2 border-transparent hover:border-[var(--primary)] shadow-lg"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="font-black text-2xl text-[var(--text-primary)]">2x Boost</div>
-                  <div className="bg-gradient-to-r from-[var(--primary)] to-purple-600 text-white text-sm font-black px-4 py-2 rounded-full shadow-md">
-                    24 HOURS
-                  </div>
-                </div>
-                <p className="text-base text-[var(--text-secondary)] mb-4 font-medium">
-                  Double your points for the next 24 hours
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="text-[var(--primary)] font-black text-2xl">100</span>
-                  <span className="text-yellow-500 text-2xl">⭐</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => handleBoostPurchase('x1.5_forever')}
-                className="w-full card p-6 text-left hover:scale-[1.02] transition-all duration-300 border-2 border-[var(--primary)] shadow-2xl bg-gradient-to-br from-[var(--primary)]/5 to-purple-500/5"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="font-black text-2xl text-[var(--text-primary)]">1.5x Boost</div>
-                  <div className="bg-gradient-to-r from-emerald-500 to-green-600 text-white text-sm font-black px-4 py-2 rounded-full shadow-md">
-                    FOREVER
-                  </div>
-                </div>
-                <p className="text-base text-[var(--text-secondary)] mb-4 font-medium">
-                  Permanent 1.5x multiplier until event ends
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="text-[var(--primary)] font-black text-2xl">200</span>
-                  <span className="text-yellow-500 text-2xl">⭐</span>
-                </div>
-              </button>
-            </div>
-
-            <button
-              onClick={() => setShowBoostModal(false)}
-              className="btn-secondary w-full py-4 font-bold text-lg"
-            >
-              {t('common.cancel')}
-            </button>
-          </div>
-        </div>
-      )}
+      <SecondChanceModal
+        isOpen={showSecondChanceModal}
+        onClose={() => setShowSecondChanceModal(false)}
+        eventId={eventId}
+        userId={user?.id || 0}
+        onPurchase={handleSecondChancePurchase}
+      />
 
       {/* Scoring Rules */}
       {isActive && (
