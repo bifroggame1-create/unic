@@ -28,12 +28,12 @@ export const STICKERS = {
   'ducks/45': '/stickers/ducks/45.json',      // Tier pro
   'ducks/85': '/stickers/ducks/85.json',      // Tier legend
 
-  // PACKAGES - 5 УНИКАЛЬНЫХ ПОДАРКОВ (только из gifts папки!)
-  giftFree: '/stickers/gifts/2.json',        // Free gift
-  giftTrial: '/stickers/gifts/12.json',      // Trial gift
-  giftBasic: '/stickers/gifts/22.json',      // Basic gift
-  giftAdvanced: '/stickers/gifts/32.json',   // Advanced gift
-  giftPremium: '/stickers/gifts/42.json',    // Premium gift
+  // PACKAGES - 5 РАЗНЫХ ТИПОВ ОБЪЕКТОВ (не кепки разных цветов!)
+  giftFree: '/stickers/ducks/4.json',        // Простая утка
+  giftTrial: '/stickers/gifts/8.json',       // Подарочная коробка
+  giftBasic: '/stickers/locket/5.json',      // Сердечко
+  giftAdvanced: '/stickers/gifts/28.json',   // Другой подарок
+  giftPremium: '/stickers/ducks/77.json',    // Премиум утка
 
   // TAB BAR - Unique contextual scenes
   tabHome: '/stickers/mascot/0.json',         // Home duck
