@@ -96,12 +96,12 @@ export default function Events() {
   }
 
   return (
-    <div className="fade-in">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-bold text-[var(--text-primary)]">{t('events.title')}</h1>
+    <div className="fade-in px-3">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-lg font-bold text-[var(--text-primary)]">{t('events.title')}</h1>
         <button
           onClick={() => router.push('/events/new')}
-          className="btn-primary text-sm py-2 px-4"
+          className="btn-primary text-xs py-2 px-4 min-h-0"
         >
           {t('events.newEvent')}
         </button>
@@ -124,27 +124,27 @@ export default function Events() {
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {events.map((event) => (
             <div
               key={event._id}
               onClick={() => router.push(`/event/${event._id}`)}
-              className="card p-5 cursor-pointer hover:shadow-md transition-shadow"
+              className="card p-3.5 cursor-pointer hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
-                    <Sticker name="banner" size={40} />
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <Sticker name="banner" size={32} />
                   </div>
-                  <div>
-                    <h3 className="font-medium text-[var(--text-primary)]">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm text-[var(--text-primary)] truncate">
                       {t('events.channel')} #{event.channelId}
                     </h3>
-                    <p className="text-xs text-[var(--text-secondary)]">{event.winnersCount} {t('events.winners')}</p>
+                    <p className="text-[10px] text-[var(--text-secondary)]">{event.winnersCount} {t('events.winners')}</p>
                   </div>
                 </div>
                 <div
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-medium whitespace-nowrap flex-shrink-0 ${
                     event.status === 'active'
                       ? 'bg-[var(--success)]/10 text-[var(--success)]'
                       : event.status === 'draft'
@@ -162,24 +162,24 @@ export default function Events() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-3 flex-wrap">
                   <div>
                     <span className="text-[var(--text-secondary)]">{t('events.participants')}: </span>
-                    <span className="font-medium text-[var(--text-primary)]">{event.participantsCount}</span>
+                    <span className="font-semibold text-[var(--text-primary)]">{event.participantsCount}</span>
                   </div>
                   {event.activityType !== 'all' && (
-                    <div className="text-[var(--text-muted)] text-xs">
+                    <div className="text-[var(--text-muted)] text-[10px]">
                       {event.activityType === 'reactions' ? t('events.reactionsOnly') : t('events.commentsOnly')}
                     </div>
                   )}
                 </div>
                 {event.status === 'active' && event.endsAt ? (
-                  <div className="text-[var(--primary)] font-medium">
+                  <div className="text-[var(--primary)] font-semibold text-xs whitespace-nowrap">
                     {formatTimeLeft(event.endsAt)}
                   </div>
                 ) : event.endsAt ? (
-                  <div className="text-[var(--text-muted)]">{formatDate(event.endsAt)}</div>
+                  <div className="text-[var(--text-muted)] text-[10px] whitespace-nowrap">{formatDate(event.endsAt)}</div>
                 ) : null}
               </div>
             </div>

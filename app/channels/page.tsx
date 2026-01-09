@@ -111,26 +111,26 @@ export default function Channels() {
   }
 
   return (
-    <div className="fade-in px-1">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-bold text-[var(--text-primary)]">{t('channels.title')}</h1>
+    <div className="fade-in px-3">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-lg font-bold text-[var(--text-primary)]">{t('channels.title')}</h1>
         <button
           onClick={() => setShowAddModal(true)}
-          className="btn-primary text-sm py-2.5 px-5 flex items-center justify-center whitespace-nowrap"
+          className="btn-primary text-xs py-2 px-4 flex items-center justify-center whitespace-nowrap min-h-0"
         >
           {t('channels.addChannel')}
         </button>
       </div>
 
       {/* Info banner */}
-      <div className="bg-[var(--primary)]/10 border border-[var(--primary)]/20 rounded-xl p-5 mb-6">
-        <div className="flex items-start gap-4">
-          <div className="w-8 h-8 flex-shrink-0">
-            <Sticker name="channelHint" size={32} />
+      <div className="bg-[var(--primary)]/10 border border-[var(--primary)]/20 rounded-xl p-4 mb-5">
+        <div className="flex items-start gap-3">
+          <div className="w-7 h-7 flex-shrink-0">
+            <Sticker name="channelHint" size={28} />
           </div>
-          <div className="text-sm text-[var(--text-primary)]">
-            <p className="font-medium mb-1">{t('channels.howToConnect')}</p>
-            <ol className="list-decimal list-inside space-y-1 text-[var(--text-secondary)]">
+          <div className="text-xs text-[var(--text-primary)]">
+            <p className="font-semibold mb-1.5">{t('channels.howToConnect')}</p>
+            <ol className="list-decimal list-inside space-y-1 text-[var(--text-secondary)] leading-relaxed">
               <li>{t('channels.step1')}</li>
               <li>{t('channels.step2')}</li>
               <li>{t('channels.step3')}</li>
@@ -156,47 +156,47 @@ export default function Channels() {
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {channels.map((channel) => (
             <div
               key={channel._id}
-              className="card p-5"
+              className="card p-3.5"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-xl font-bold">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-base font-bold flex-shrink-0">
                     {channel.title.charAt(0).toUpperCase()}
                   </div>
-                  <div>
-                    <h3 className="font-medium text-[var(--text-primary)]">{channel.title}</h3>
-                    <div className="flex items-center gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm text-[var(--text-primary)] truncate">{channel.title}</h3>
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       {channel.username && (
-                        <span className="text-sm text-[var(--text-secondary)]">@{channel.username}</span>
+                        <span className="text-xs text-[var(--text-secondary)]">@{channel.username}</span>
                       )}
-                      <span className="text-xs text-[var(--text-muted)]">•</span>
-                      <span className="text-sm text-[var(--text-secondary)]">
+                      <span className="text-[10px] text-[var(--text-muted)]">•</span>
+                      <span className="text-xs text-[var(--text-secondary)]">
                         {formatSubscribers(channel.subscribersCount)} {t('channels.subscribers')}
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {channel.isVerified ? (
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-[var(--success)]/10 text-[var(--success)] flex items-center gap-1">
-                      <CheckIcon /> {t('channels.verified')}
-                    </span>
-                  ) : (
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-                      {t('channels.pending')}
-                    </span>
-                  )}
-                  <button
-                    onClick={() => handleDeleteChannel(channel._id)}
-                    className="p-2 text-[var(--text-muted)] hover:text-[var(--error)] transition-colors"
-                  >
-                    <TrashIcon />
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleDeleteChannel(channel._id)}
+                  className="p-1.5 text-[var(--text-muted)] hover:text-[var(--error)] transition-colors flex-shrink-0"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+              <div className="flex items-center justify-end">
+                {channel.isVerified ? (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--success)]/10 text-[var(--success)] flex items-center gap-1">
+                    <CheckIcon /> {t('channels.verified')}
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                    {t('channels.pending')}
+                  </span>
+                )}
               </div>
             </div>
           ))}

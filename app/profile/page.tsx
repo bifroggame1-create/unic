@@ -103,58 +103,61 @@ export default function Profile() {
   const planInfo = stats ? getPlanDisplay(stats.plan) : getPlanDisplay('free')
 
   return (
-    <div className="fade-in">
-      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">{t('profile.title')}</h1>
-      <p className="text-sm text-[var(--text-secondary)] mb-8">{t('profile.manageAccount')}</p>
+    <div className="fade-in px-3">
+      <h1 className="text-lg font-bold text-[var(--text-primary)] mb-1">{t('profile.title')}</h1>
+      <p className="text-xs text-[var(--text-secondary)] mb-6">{t('profile.manageAccount')}</p>
 
       {/* User Card */}
-      <div className="card p-5 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-            {telegramUser?.first_name?.charAt(0) || '?'}
+      <div className="card p-4 mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
+            {telegramUser?.first_name?.charAt(0) || telegramUser?.username?.charAt(0) || String(telegramUser?.id).charAt(0) || '?'}
           </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="font-semibold text-[var(--text-primary)]">
-                {telegramUser?.first_name || 'User'}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="font-semibold text-sm text-[var(--text-primary)] truncate">
+                {telegramUser?.first_name || telegramUser?.username || `User ${telegramUser?.id}` || 'User'}
                 {telegramUser?.last_name && ` ${telegramUser.last_name}`}
               </h2>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${planInfo.color}`}>
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium ${planInfo.color} whitespace-nowrap`}>
                 {planInfo.label}
               </span>
             </div>
             {telegramUser?.username && (
-              <p className="text-sm text-[var(--text-secondary)]">@{telegramUser.username}</p>
+              <p className="text-xs text-[var(--text-secondary)] truncate">@{telegramUser.username}</p>
+            )}
+            {!telegramUser?.username && telegramUser?.id && (
+              <p className="text-xs text-[var(--text-secondary)]">ID: {telegramUser.id}</p>
             )}
           </div>
         </div>
       </div>
 
       {/* Monthly Usage Card */}
-      <div className="card p-5 mb-6">
-        <h3 className="font-semibold text-[var(--primary)] mb-4">{t('profile.monthlyUsage')}</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
+      <div className="card p-4 mb-5">
+        <h3 className="font-semibold text-sm text-[var(--primary)] mb-3">{t('profile.monthlyUsage')}</h3>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-xs">
             <span className="text-[var(--text-secondary)]">{t('profile.eventsThisMonth')}</span>
-            <span className="font-medium text-[var(--text-primary)]">
+            <span className="font-semibold text-[var(--text-primary)]">
               {stats?.eventsThisMonth || 0} / {stats?.limits.events || 1}
             </span>
           </div>
-          <div className="w-full bg-[var(--bg-start)] rounded-full h-2">
+          <div className="w-full bg-[var(--bg-start)] rounded-full h-1.5">
             <div
-              className="bg-[var(--primary)] h-2 rounded-full transition-all"
+              className="bg-[var(--primary)] h-1.5 rounded-full transition-all"
               style={{
                 width: `${Math.min(((stats?.eventsThisMonth || 0) / (stats?.limits.events || 1)) * 100, 100)}%`,
               }}
             ></div>
           </div>
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-xs">
             <span className="text-[var(--text-secondary)]">{t('profile.channelsLimit')}</span>
-            <span className="text-[var(--text-primary)]">{stats?.limits.channels || 1}</span>
+            <span className="font-semibold text-[var(--text-primary)]">{stats?.limits.channels || 1}</span>
           </div>
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-xs">
             <span className="text-[var(--text-secondary)]">{t('profile.maxParticipants')}</span>
-            <span className="text-[var(--text-primary)]">
+            <span className="font-semibold text-[var(--text-primary)]">
               {stats?.limits.participants === 999999 ? t('profile.unlimited') : stats?.limits.participants || 100}
             </span>
           </div>
@@ -162,33 +165,33 @@ export default function Profile() {
       </div>
 
       {/* Stats Card */}
-      <div className="card p-5 mb-6">
-        <h3 className="font-semibold text-[var(--primary)] mb-4">{t('profile.stats')}</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[var(--bg-start)] rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold text-[var(--text-primary)]">{stats?.eventsCreated || 0}</p>
-            <p className="text-xs text-[var(--text-secondary)]">{t('profile.totalEvents')}</p>
+      <div className="card p-4 mb-5">
+        <h3 className="font-semibold text-sm text-[var(--primary)] mb-3">{t('profile.stats')}</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-[var(--bg-start)] rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-[var(--text-primary)]">{stats?.eventsCreated || 0}</p>
+            <p className="text-[10px] text-[var(--text-secondary)] leading-tight mt-1">{t('profile.totalEvents')}</p>
           </div>
-          <div className="bg-[var(--bg-start)] rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold text-[var(--text-primary)]">{stats?.referralsCount || 0}</p>
-            <p className="text-xs text-[var(--text-secondary)]">{t('profile.referral')}</p>
+          <div className="bg-[var(--bg-start)] rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-[var(--text-primary)]">{stats?.referralsCount || 0}</p>
+            <p className="text-[10px] text-[var(--text-secondary)] leading-tight mt-1">{t('profile.referral')}</p>
           </div>
         </div>
       </div>
 
       {/* Settings Card */}
-      <div className="card p-5 mb-6">
-        <h3 className="font-semibold text-[var(--primary)] mb-4">{t('profile.settings')}</h3>
+      <div className="card p-4 mb-5">
+        <h3 className="font-semibold text-sm text-[var(--primary)] mb-3">{t('profile.settings')}</h3>
 
         {/* Theme Selector */}
-        <div className="mb-5">
-          <p className="text-sm text-[var(--text-secondary)] mb-2">{t('profile.theme')}</p>
+        <div className="mb-4">
+          <p className="text-xs text-[var(--text-secondary)] mb-2">{t('profile.theme')}</p>
           <div className="flex gap-2">
             {THEMES.map((themeItem) => (
               <button
                 key={themeItem.value}
                 onClick={() => setTheme(themeItem.value)}
-                className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                className={`flex-1 py-2 px-2 rounded-xl text-xs font-semibold transition-all ${
                   theme === themeItem.value
                     ? 'bg-[var(--primary)] text-white'
                     : 'bg-[var(--bg-start)] text-[var(--text-primary)] hover:bg-[var(--card-border)]'
@@ -202,13 +205,13 @@ export default function Profile() {
 
         {/* Language Selector */}
         <div>
-          <p className="text-sm text-[var(--text-secondary)] mb-2">{t('profile.language')}</p>
+          <p className="text-xs text-[var(--text-secondary)] mb-2">{t('profile.language')}</p>
           <div className="flex gap-2">
             {LANGUAGES.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                className={`flex-1 py-2 px-2 rounded-xl text-xs font-semibold transition-all ${
                   language === lang.code
                     ? 'bg-[var(--primary)] text-white'
                     : 'bg-[var(--bg-start)] text-[var(--text-primary)] hover:bg-[var(--card-border)]'
@@ -222,9 +225,9 @@ export default function Profile() {
       </div>
 
       {/* Referral Card */}
-      <div className="card p-5 mb-6">
-        <h3 className="font-semibold text-[var(--primary)] mb-3">{t('profile.referralProgram')}</h3>
-        <p className="text-sm text-[var(--text-secondary)] mb-4">
+      <div className="card p-4 mb-5">
+        <h3 className="font-semibold text-sm text-[var(--primary)] mb-2">{t('profile.referralProgram')}</h3>
+        <p className="text-xs text-[var(--text-secondary)] mb-3">
           {t('profile.inviteAndEarn')}
         </p>
         {stats?.referralCode && (
@@ -233,11 +236,11 @@ export default function Profile() {
               type="text"
               value={`t.me/UnicBot?start=ref_${stats.referralCode}`}
               readOnly
-              className="input text-sm flex-1"
+              className="input text-xs flex-1 py-2 px-3"
             />
             <button
               onClick={handleCopyReferral}
-              className="btn-primary text-sm py-2 px-4"
+              className="btn-primary text-xs py-2 px-3 min-h-0 whitespace-nowrap"
             >
               {copied ? t('common.copied') : t('profile.copy')}
             </button>
@@ -246,20 +249,20 @@ export default function Profile() {
       </div>
 
       {/* Decorative Sticker */}
-      <div className="flex justify-center mb-6 opacity-60">
-        <Sticker name="profileDecor" size={100} />
+      <div className="flex justify-center mb-5 opacity-50">
+        <Sticker name="profileDecor" size={80} />
       </div>
 
       {/* Plan Expiry */}
       {stats?.planExpiresAt && stats.plan !== 'free' && (
-        <div className="card p-4 mb-4 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 flex-shrink-0">
-              <Sticker name="warning" size={40} />
+        <div className="card p-3.5 mb-4 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 flex-shrink-0">
+              <Sticker name="warning" size={32} />
             </div>
             <div>
-              <p className="font-medium text-[var(--text-primary)]">{t('profile.planExpires')}</p>
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="font-semibold text-xs text-[var(--text-primary)]">{t('profile.planExpires')}</p>
+              <p className="text-[10px] text-[var(--text-secondary)]">
                 {new Date(stats.planExpiresAt).toLocaleDateString()}
               </p>
             </div>
@@ -270,13 +273,13 @@ export default function Profile() {
       {/* Upgrade Button */}
       <button
         onClick={() => router.push('/packages')}
-        className="btn-primary w-full"
+        className="btn-primary w-full text-sm"
       >
         {stats?.plan === 'free' ? t('profile.upgradePlan') : t('profile.managePlan')}
       </button>
 
       {/* Footer Links */}
-      <div className="flex justify-center gap-4 mt-8 text-sm text-[var(--text-muted)]">
+      <div className="flex justify-center gap-3 mt-6 text-[10px] text-[var(--text-muted)]">
         <a href="https://t.me/unicsupport" className="hover:text-[var(--text-secondary)]">{t('profile.support')}</a>
         <span>•</span>
         <a href="#" className="hover:text-[var(--text-secondary)]">{t('profile.privacy')}</a>
