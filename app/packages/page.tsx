@@ -86,7 +86,7 @@ export default function Packages() {
   }
 
   return (
-    <div className="fade-in pb-10 px-4">
+    <div className="fade-in pb-10">
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">{t('packages.title')}</h1>

@@ -22,7 +22,7 @@ export default function Home() {
   }
 
   return (
-    <div className="pb-24 px-4">
+    <div className="pb-8">
       {/* Section: Quick Actions */}
       <div className="mb-8">
         <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">

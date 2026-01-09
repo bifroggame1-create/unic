@@ -136,12 +136,16 @@ export default function Sticker({
   }
 
   return (
-    <Lottie
-      animationData={animationData}
-      loop={loop}
-      autoplay={autoplay}
+    <div
       style={sizeStyle}
-      className={className}
-    />
+      className={`flex items-center justify-center overflow-hidden ${className}`}
+    >
+      <Lottie
+        animationData={animationData}
+        loop={loop}
+        autoplay={autoplay}
+        style={{ width: '100%', height: '100%' }}
+      />
+    </div>
   )
 }
