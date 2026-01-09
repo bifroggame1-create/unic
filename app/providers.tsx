@@ -39,7 +39,7 @@ export function Providers({ children }: { children: ReactNode }) {
               {/* Container wrapper for large screens */}
               <div className="w-full max-w-[480px] mx-auto flex flex-col min-h-screen">
                 <Header />
-                <main className="flex-1 px-4 pb-24">
+                <main className="flex-1 px-4 pt-8 pb-24">
                   {children}
                 </main>
                 <TabBar />
