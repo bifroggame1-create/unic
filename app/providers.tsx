@@ -1,6 +1,7 @@
 'use client'
 
 import { ReactNode, useState, useEffect } from 'react'
+import { AppRoot } from '@telegram-apps/telegram-ui'
 import { TelegramProvider } from './contexts/TelegramContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { LanguageProvider } from './contexts/LanguageContext'
@@ -33,21 +34,23 @@ export function Providers({ children }: { children: ReactNode }) {
     <ThemeProvider>
       <LanguageProvider>
         <TelegramProvider>
-          <div className="min-h-screen flex flex-col bg-[var(--tg-theme-bg-color)] text-[var(--tg-theme-text-color)]">
-            {/* Container wrapper for large screens */}
-            <div className="w-full max-w-[480px] mx-auto flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-1 px-4 pb-24">
-                {children}
-              </main>
-              <TabBar />
-            </div>
+          <AppRoot>
+            <div className="min-h-screen flex flex-col bg-[var(--tg-theme-bg-color)] text-[var(--tg-theme-text-color)]">
+              {/* Container wrapper for large screens */}
+              <div className="w-full max-w-[480px] mx-auto flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-1 px-4 pb-24">
+                  {children}
+                </main>
+                <TabBar />
+              </div>
 
-            {/* Onboarding overlay */}
-            {mounted && showOnboarding && (
-              <Onboarding onComplete={handleOnboardingComplete} />
-            )}
-          </div>
+              {/* Onboarding overlay */}
+              {mounted && showOnboarding && (
+                <Onboarding onComplete={handleOnboardingComplete} />
+              )}
+            </div>
+          </AppRoot>
         </TelegramProvider>
       </LanguageProvider>
     </ThemeProvider>
