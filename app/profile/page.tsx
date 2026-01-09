@@ -25,6 +25,8 @@ export default function Profile() {
   const router = useRouter()
   const { user: telegramUser } = useTelegram()
   const { theme, setTheme } = useTheme()
+  const language = 'en'
+  const setLanguage = (_: string) => {}
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
