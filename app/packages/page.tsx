@@ -86,18 +86,18 @@ export default function Packages() {
   }
 
   return (
-    <div className="fade-in pb-10 px-3">
+    <div className="fade-in pb-10 px-4">
       {/* Header */}
-      <div className="text-center mb-6">
-        <h1 className="text-lg font-bold text-[var(--text-primary)] mb-1.5">{t('packages.title')}</h1>
-        <p className="text-xs text-[var(--text-secondary)]">{t('packages.subtitle')}</p>
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">{t('packages.title')}</h1>
+        <p className="text-sm text-[var(--text-secondary)]">{t('packages.subtitle')}</p>
       </div>
 
       {/* Billing Toggle - Mobile Optimized */}
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-8">
         <div className="inline-flex bg-[var(--bg-start)] p-1.5 rounded-2xl border border-[var(--card-border)]">
           <button
-            className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            className={`px-8 py-3 rounded-xl text-sm font-semibold transition-all ${
               billing === 'monthly'
                 ? 'bg-[var(--primary)] text-white shadow-md'
                 : 'text-[var(--text-secondary)]'
@@ -110,7 +110,7 @@ export default function Packages() {
             {t('packages.monthly')}
           </button>
           <button
-            className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            className={`px-8 py-3 rounded-xl text-sm font-semibold transition-all ${
               billing === 'yearly'
                 ? 'bg-[var(--primary)] text-white shadow-md'
                 : 'text-[var(--text-secondary)]'
@@ -121,13 +121,13 @@ export default function Packages() {
             }}
           >
             {t('packages.yearly')}
-            <span className="ml-1.5 text-xs opacity-80">-17%</span>
+            <span className="ml-2 text-xs opacity-80">-17%</span>
           </button>
         </div>
       </div>
 
       {/* Packages List */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {packages.map((pkg) => (
           <div
             key={pkg.nameKey}
@@ -143,41 +143,41 @@ export default function Packages() {
             )}
 
             {/* Card Content */}
-            <div className="p-4">
+            <div className="p-6">
               {/* Header with Sticker */}
-              <div className="flex items-center gap-3 mb-4">
-                {/* Sticker */}
-                <div className="flex-shrink-0">
-                  <Sticker name={pkg.sticker} size={64} />
-                </div>
-
+              <div className="flex items-center gap-4 mb-6">
                 {/* Plan Name & Price */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-bold text-[var(--text-primary)]">{t(pkg.nameKey)}</h3>
-                  <div className="flex items-baseline gap-1 mt-0.5">
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">{t(pkg.nameKey)}</h3>
+                  <div className="flex items-baseline gap-1">
                     {pkg.price === 0 ? (
-                      <span className="text-xl font-bold text-[var(--text-primary)]">{t('packages.free')}</span>
+                      <span className="text-2xl font-bold text-[var(--text-primary)]">{t('packages.free')}</span>
                     ) : (
                       <>
-                        <span className="text-xl font-bold text-[var(--text-primary)]">
+                        <span className="text-2xl font-bold text-[var(--text-primary)]">
                           {billing === 'yearly'
                             ? Math.round(pkg.price * 10)
                             : pkg.price}₽
                         </span>
-                        <span className="text-xs text-[var(--text-secondary)]">
+                        <span className="text-sm text-[var(--text-secondary)]">
                           {billing === 'yearly' ? t('packages.perYear') : pkg.periodKey ? t(pkg.periodKey) : ''}
                         </span>
                       </>
                     )}
                   </div>
                 </div>
+
+                {/* Sticker */}
+                <div className="flex-shrink-0">
+                  <Sticker name={pkg.sticker} size={100} />
+                </div>
               </div>
 
               {/* Features */}
-              <ul className="space-y-2 mb-4">
+              <ul className="space-y-3 mb-6">
                 {pkg.featureKeys.map((featureKey, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs">
-                    <svg className="w-4 h-4 text-[var(--success)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <li key={idx} className="flex items-start gap-3 text-sm">
+                    <svg className="w-5 h-5 text-[var(--success)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span className="text-[var(--text-secondary)] leading-relaxed">{t(featureKey)}</span>
@@ -189,7 +189,7 @@ export default function Packages() {
               <button
                 onClick={() => handleSubscribe(pkg)}
                 disabled={pkg.disabled}
-                className={`w-full py-4 rounded-xl font-bold text-base tracking-wide transition-all active:scale-[0.97] flex items-center justify-center gap-2 ${
+                className={`w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-[0.97] flex items-center justify-center gap-2 ${
                   pkg.disabled
                     ? 'bg-[var(--bg-start)] text-[var(--text-muted)] cursor-not-allowed'
                     : pkg.popular
@@ -210,7 +210,7 @@ export default function Packages() {
       </div>
 
       {/* Footer Note */}
-      <p className="text-center text-[10px] text-[var(--text-muted)] mt-5 px-4 leading-relaxed">
+      <p className="text-center text-xs text-[var(--text-muted)] mt-8 px-4 leading-relaxed">
         {t('packages.yearly')} = 10x {t('packages.monthly')} • 2 {t('packages.perMonth')} free
       </p>
     </div>
