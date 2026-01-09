@@ -17,6 +17,7 @@ export function t(key: string): string {
     'common.loading': 'Загрузка...',
     'common.error': 'Ошибка',
     'common.success': 'Успешно',
+    'common.copied': 'Скопировано',
 
     // Каналы
     'channels.title': 'Каналы',
@@ -181,15 +182,33 @@ export function t(key: string): string {
 
     // Профиль
     'profile.title': 'Профиль',
+    'profile.manageAccount': 'Управление аккаунтом и настройками',
+    'profile.loadingProfile': 'Загрузка профиля...',
+    'profile.errorLoading': 'Ошибка загрузки профиля',
     'profile.plan': 'План',
     'profile.eventsThisMonth': 'События в этом месяце',
     'profile.totalEvents': 'Всего событий',
     'profile.referrals': 'Рефералы',
+    'profile.referral': 'Рефералов',
     'profile.referralCode': 'Реферальный код',
+    'profile.referralProgram': 'Реферальная программа',
+    'profile.inviteAndEarn': 'Приглашай друзей и получай бонусы',
+    'profile.copy': 'Копировать',
     'profile.settings': 'Настройки',
     'profile.language': 'Язык',
     'profile.theme': 'Тема',
     'profile.notifications': 'Уведомления',
+    'profile.monthlyUsage': 'Использование в этом месяце',
+    'profile.channelsLimit': 'Каналов',
+    'profile.maxParticipants': 'Макс. участников',
+    'profile.unlimited': 'Безлимит',
+    'profile.stats': 'Статистика',
+    'profile.planExpires': 'План истекает',
+    'profile.upgradePlan': 'Улучшить план',
+    'profile.managePlan': 'Управление планом',
+    'profile.support': 'Поддержка',
+    'profile.privacy': 'Конфиденциальность',
+    'profile.terms': 'Условия',
 
     // Boost (новое)
     'boost.ctaPrimary': 'Увеличить шанс',
