@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Sticker, { StickerName } from '../components/Sticker'
-import { useHaptic } from '../contexts/TelegramContext'
+import { useHaptic, useTelegram } from '../contexts/TelegramContext'
+import { useTonAddress, useTonConnectUI } from '@tonconnect/ui-react'
 import { t } from '../lib/translations'
 
 interface Package {
@@ -77,16 +78,70 @@ const packages: Package[] = [
 
 export default function Packages() {
   const haptic = useHaptic()
+  const telegram = useTelegram()
+  const userFriendlyAddress = useTonAddress()
+  const [tonConnectUI] = useTonConnectUI()
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly')
-  
+  const [processing, setProcessing] = useState(false)
 
-  const handleSubscribe = (pkg: Package) => {
+  const handleSubscribe = async (pkg: Package) => {
     haptic.impact('medium')
-    // Handle subscription
+
+    if (pkg.disabled) return
+
+    // Free plan - no payment needed
+    if (pkg.price === 0) {
+      telegram?.showAlert('You are already on the free plan')
+      return
+    }
+
+    // Check if wallet is connected
+    if (!userFriendlyAddress) {
+      telegram?.showAlert('Please connect your TON wallet first (top right corner)')
+      return
+    }
+
+    setProcessing(true)
+
+    try {
+      const amount = billing === 'yearly' ? Math.round(pkg.price * 10) : pkg.price
+
+      // Create TON transaction
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+        messages: [
+          {
+            address: process.env.NEXT_PUBLIC_TON_RECEIVER || 'UQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG',
+            amount: String(amount * 1000000000), // Convert to nanotons (1 TON = 1B nanotons)
+            payload: `Subscription: ${pkg.nameKey} (${billing})`,
+          },
+        ],
+      }
+
+      // Send transaction
+      await tonConnectUI.sendTransaction(transaction)
+
+      telegram?.showAlert('Payment sent! Your plan will be activated shortly.')
+      haptic.notification('success')
+
+      // TODO: Backend verification and plan activation
+      // This should call backend API to verify payment and activate subscription
+
+    } catch (error: any) {
+      console.error('Payment error:', error)
+      if (error.message?.includes('reject')) {
+        telegram?.showAlert('Payment cancelled')
+      } else {
+        telegram?.showAlert('Payment failed. Please try again.')
+      }
+      haptic.notification('error')
+    } finally {
+      setProcessing(false)
+    }
   }
 
   return (
-    <div className="fade-in pb-10">
+    <div className="fade-in pb-32">
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">{t('packages.title')}</h1>
@@ -188,17 +243,17 @@ export default function Packages() {
               {/* CTA Button - Mobile Optimized */}
               <button
                 onClick={() => handleSubscribe(pkg)}
-                disabled={pkg.disabled}
+                disabled={pkg.disabled || processing}
                 className={`w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-[0.97] flex items-center justify-center gap-2 ${
-                  pkg.disabled
+                  pkg.disabled || processing
                     ? 'bg-[var(--bg-start)] text-[var(--text-muted)] cursor-not-allowed'
                     : pkg.popular
                       ? `bg-gradient-to-r ${pkg.gradient} text-white shadow-xl hover:shadow-2xl`
                       : `bg-gradient-to-r ${pkg.gradient} text-white shadow-lg hover:shadow-xl`
                 }`}
               >
-                {t(pkg.ctaKey)}
-                {!pkg.disabled && (
+                {processing ? 'Processing...' : t(pkg.ctaKey)}
+                {!pkg.disabled && !processing && (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
