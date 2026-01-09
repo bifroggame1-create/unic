@@ -22,9 +22,9 @@ export default function Home() {
   }
 
   return (
-    <div className="pb-20">
+    <div className="pb-24">
       {/* Header Card - Compact */}
-      <div className="bg-[var(--primary)] text-white px-4 py-6 mb-6">
+      <div className="bg-[var(--primary)] text-white px-4 py-6 mb-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold mb-1">UNIC</h1>
@@ -37,19 +37,19 @@ export default function Home() {
       </div>
 
       {/* Section: Quick Actions */}
-      <div className="px-4 mb-8">
-        <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3 px-1">
+      <div className="px-4 mb-10">
+        <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4 px-1">
           {t('home.quickActions')}
         </h2>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           {/* New Event - Primary Action */}
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={() => handlePress('/events/new')}
-            className="w-full bg-[var(--primary)] text-white rounded-xl p-4 flex items-center justify-between shadow-sm active:shadow-none"
+            className="w-full bg-[var(--primary)] text-white rounded-xl p-5 flex items-center justify-between shadow-sm active:shadow-none"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                 <Sticker name="mascot/20" size={32} />
               </div>
@@ -67,9 +67,9 @@ export default function Home() {
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={() => handlePress('/events')}
-            className="w-full card p-4 flex items-center justify-between"
+            className="w-full card p-5 flex items-center justify-between"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-[var(--primary)]/10 rounded-full flex items-center justify-center">
                 <Sticker name="mascot/30" size={32} />
               </div>
@@ -87,9 +87,9 @@ export default function Home() {
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={() => handlePress('/channels')}
-            className="w-full card p-4 flex items-center justify-between"
+            className="w-full card p-5 flex items-center justify-between"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-[var(--primary)]/10 rounded-full flex items-center justify-center">
                 <Sticker name="mascot/40" size={32} />
               </div>
@@ -106,15 +106,15 @@ export default function Home() {
       </div>
 
       {/* Section: Your Progress */}
-      <div className="px-4 mb-8">
-        <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3 px-1">
+      <div className="px-4 mb-10">
+        <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4 px-1">
           {t('home.yourJourney')}
         </h2>
 
-        <div className="card p-4">
+        <div className="card p-5">
           {/* Current Tier */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
                 <Sticker name="ducks/45" size={36} />
               </div>
@@ -140,8 +140,8 @@ export default function Home() {
           </div>
 
           {/* Next Tier */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--card-border)]">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between mt-5 pt-5 border-t border-[var(--card-border)]">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center opacity-40">
                 <Sticker name="ducks/85" size={32} />
               </div>
@@ -158,22 +158,22 @@ export default function Home() {
       </div>
 
       {/* Section: Stats */}
-      <div className="px-4 mb-8">
-        <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3 px-1">
+      <div className="px-4 mb-10">
+        <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4 px-1">
           {t('home.stats')}
         </h2>
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className="card p-4 text-center">
-            <div className="text-2xl font-bold text-[var(--primary)] mb-1">12</div>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="card p-5 text-center">
+            <div className="text-2xl font-bold text-[var(--primary)] mb-2">12</div>
             <div className="text-xs text-[var(--text-secondary)]">{t('home.events')}</div>
           </div>
-          <div className="card p-4 text-center">
-            <div className="text-2xl font-bold text-[var(--primary)] mb-1">3.2K</div>
+          <div className="card p-5 text-center">
+            <div className="text-2xl font-bold text-[var(--primary)] mb-2">3.2K</div>
             <div className="text-xs text-[var(--text-secondary)]">{t('home.participants')}</div>
           </div>
-          <div className="card p-4 text-center">
-            <div className="text-2xl font-bold text-[var(--primary)] mb-1">89%</div>
+          <div className="card p-5 text-center">
+            <div className="text-2xl font-bold text-[var(--primary)] mb-2">89%</div>
             <div className="text-xs text-[var(--text-secondary)]">{t('home.engagement')}</div>
           </div>
         </div>
@@ -184,9 +184,9 @@ export default function Home() {
         <motion.button
           whileTap={{ scale: 0.98 }}
           onClick={() => handlePress('/packages')}
-          className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl p-4 flex items-center justify-between shadow-lg"
+          className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl p-5 flex items-center justify-between shadow-lg"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
               <Sticker name="gifts/5" size={32} />
             </div>

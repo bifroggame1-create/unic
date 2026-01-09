@@ -112,7 +112,7 @@ export default function Channels() {
 
   return (
     <div className="fade-in px-1">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">{t('channels.title')}</h1>
         <button
           onClick={() => setShowAddModal(true)}
@@ -123,8 +123,8 @@ export default function Channels() {
       </div>
 
       {/* Info banner */}
-      <div className="bg-[var(--primary)]/10 border border-[var(--primary)]/20 rounded-xl p-4 mb-4">
-        <div className="flex items-start gap-3">
+      <div className="bg-[var(--primary)]/10 border border-[var(--primary)]/20 rounded-xl p-5 mb-6">
+        <div className="flex items-start gap-4">
           <div className="w-8 h-8 flex-shrink-0">
             <Sticker name="channelHint" size={32} />
           </div>
@@ -156,14 +156,14 @@ export default function Channels() {
           </button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {channels.map((channel) => (
             <div
               key={channel._id}
-              className="card p-4"
+              className="card p-5"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-xl font-bold">
                     {channel.title.charAt(0).toUpperCase()}
                   </div>

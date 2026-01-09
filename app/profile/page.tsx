@@ -104,11 +104,11 @@ export default function Profile() {
 
   return (
     <div className="fade-in">
-      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">{t('profile.title')}</h1>
-      <p className="text-sm text-[var(--text-secondary)] mb-6">{t('profile.manageAccount')}</p>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">{t('profile.title')}</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-8">{t('profile.manageAccount')}</p>
 
       {/* User Card */}
-      <div className="card p-4 mb-4">
+      <div className="card p-5 mb-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-2xl font-bold">
             {telegramUser?.first_name?.charAt(0) || '?'}
@@ -131,9 +131,9 @@ export default function Profile() {
       </div>
 
       {/* Monthly Usage Card */}
-      <div className="card p-4 mb-4">
-        <h3 className="font-semibold text-[var(--primary)] mb-3">{t('profile.monthlyUsage')}</h3>
-        <div className="space-y-3">
+      <div className="card p-5 mb-6">
+        <h3 className="font-semibold text-[var(--primary)] mb-4">{t('profile.monthlyUsage')}</h3>
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-[var(--text-secondary)]">{t('profile.eventsThisMonth')}</span>
             <span className="font-medium text-[var(--text-primary)]">
@@ -162,14 +162,14 @@ export default function Profile() {
       </div>
 
       {/* Stats Card */}
-      <div className="card p-4 mb-4">
-        <h3 className="font-semibold text-[var(--primary)] mb-3">{t('profile.stats')}</h3>
+      <div className="card p-5 mb-6">
+        <h3 className="font-semibold text-[var(--primary)] mb-4">{t('profile.stats')}</h3>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[var(--bg-start)] rounded-xl p-3 text-center">
+          <div className="bg-[var(--bg-start)] rounded-xl p-4 text-center">
             <p className="text-2xl font-bold text-[var(--text-primary)]">{stats?.eventsCreated || 0}</p>
             <p className="text-xs text-[var(--text-secondary)]">{t('profile.totalEvents')}</p>
           </div>
-          <div className="bg-[var(--bg-start)] rounded-xl p-3 text-center">
+          <div className="bg-[var(--bg-start)] rounded-xl p-4 text-center">
             <p className="text-2xl font-bold text-[var(--text-primary)]">{stats?.referralsCount || 0}</p>
             <p className="text-xs text-[var(--text-secondary)]">{t('profile.referral')}</p>
           </div>
@@ -177,11 +177,11 @@ export default function Profile() {
       </div>
 
       {/* Settings Card */}
-      <div className="card p-4 mb-4">
-        <h3 className="font-semibold text-[var(--primary)] mb-3">{t('profile.settings')}</h3>
+      <div className="card p-5 mb-6">
+        <h3 className="font-semibold text-[var(--primary)] mb-4">{t('profile.settings')}</h3>
 
         {/* Theme Selector */}
-        <div className="mb-4">
+        <div className="mb-5">
           <p className="text-sm text-[var(--text-secondary)] mb-2">{t('profile.theme')}</p>
           <div className="flex gap-2">
             {THEMES.map((themeItem) => (
@@ -222,9 +222,9 @@ export default function Profile() {
       </div>
 
       {/* Referral Card */}
-      <div className="card p-4 mb-4">
-        <h3 className="font-semibold text-[var(--primary)] mb-2">{t('profile.referralProgram')}</h3>
-        <p className="text-sm text-[var(--text-secondary)] mb-3">
+      <div className="card p-5 mb-6">
+        <h3 className="font-semibold text-[var(--primary)] mb-3">{t('profile.referralProgram')}</h3>
+        <p className="text-sm text-[var(--text-secondary)] mb-4">
           {t('profile.inviteAndEarn')}
         </p>
         {stats?.referralCode && (

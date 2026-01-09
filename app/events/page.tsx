@@ -97,7 +97,7 @@ export default function Events() {
 
   return (
     <div className="fade-in">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">{t('events.title')}</h1>
         <button
           onClick={() => router.push('/events/new')}
@@ -124,15 +124,15 @@ export default function Events() {
           </button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {events.map((event) => (
             <div
               key={event._id}
               onClick={() => router.push(`/event/${event._id}`)}
-              className="card p-4 cursor-pointer hover:shadow-md transition-shadow"
+              className="card p-5 cursor-pointer hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
                     <Sticker name="banner" size={40} />
                   </div>

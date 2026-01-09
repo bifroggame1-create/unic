@@ -86,15 +86,15 @@ export default function Packages() {
   }
 
   return (
-    <div className="fade-in pb-6">
+    <div className="fade-in pb-10">
       {/* Header */}
-      <div className="text-center mb-5">
-        <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">{t('packages.title')}</h1>
+      <div className="text-center mb-8">
+        <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">{t('packages.title')}</h1>
         <p className="text-sm text-[var(--text-secondary)]">{t('packages.subtitle')}</p>
       </div>
 
       {/* Billing Toggle - Mobile Optimized */}
-      <div className="flex justify-center mb-5">
+      <div className="flex justify-center mb-8">
         <div className="inline-flex bg-[var(--bg-start)] p-1 rounded-xl">
           <button
             className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -127,7 +127,7 @@ export default function Packages() {
       </div>
 
       {/* Packages List */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {packages.map((pkg) => (
           <div
             key={pkg.nameKey}
@@ -143,9 +143,9 @@ export default function Packages() {
             )}
 
             {/* Card Content */}
-            <div className="p-4">
+            <div className="p-5">
               {/* Header with Sticker */}
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-4 mb-5">
                 {/* Sticker */}
                 <div className="flex-shrink-0">
                   <Sticker name={pkg.sticker} size={80} />
@@ -174,7 +174,7 @@ export default function Packages() {
               </div>
 
               {/* Features */}
-              <ul className="space-y-2 mb-5">
+              <ul className="space-y-3 mb-6">
                 {pkg.featureKeys.map((featureKey, idx) => (
                   <li key={idx} className="flex items-start gap-2.5 text-sm">
                     <svg className="w-5 h-5 text-[var(--success)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
