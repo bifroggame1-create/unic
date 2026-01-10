@@ -63,6 +63,8 @@ interface TelegramWebApp {
   showAlert: (message: string, callback?: () => void) => void
   showConfirm: (message: string, callback?: (confirmed: boolean) => void) => void
   openInvoice?: (url: string, callback?: (status: string) => void) => void
+  onEvent: (eventType: string, callback: () => void) => void
+  offEvent: (eventType: string, callback: () => void) => void
 }
 
 declare global {
@@ -118,11 +120,29 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
           }
         }
 
+        // Set initial viewport height
+        const updateViewportHeight = () => {
+          document.documentElement.style.setProperty(
+            '--tg-viewport-height',
+            `${tgWebApp.viewportHeight}px`
+          )
+        }
+
+        updateViewportHeight()
+
+        // Listen to viewport changes (keyboard, orientation)
+        tgWebApp.onEvent('viewportChanged', updateViewportHeight)
+
         // Tell Telegram we're ready
         tgWebApp.ready()
         tgWebApp.expand()
 
         setIsReady(true)
+
+        // Cleanup viewport listener
+        return () => {
+          tgWebApp.offEvent('viewportChanged', updateViewportHeight)
+        }
       } else {
         // Development mode - mock user
         const mockUser: TelegramUser = {

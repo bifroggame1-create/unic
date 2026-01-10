@@ -44,25 +44,41 @@ export default function TabBar() {
   })
 
   return (
-    <nav className="tab-bar">
-      {tabs.map((tab) => {
-        const isActive = pathname === tab.href ||
-          (tab.href !== '/' && pathname.startsWith(tab.href))
+    <nav
+      className="fixed bottom-0 left-0 right-0 pb-safe"
+      style={{
+        zIndex: 'var(--z-nav)',
+        background: 'var(--tg-theme-bg-color)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderTop: '1px solid var(--card-border)'
+      }}
+    >
+      <div className="flex justify-around items-center max-w-[480px] mx-auto">
+        {tabs.map((tab) => {
+          const isActive = pathname === tab.href ||
+            (tab.href !== '/' && pathname.startsWith(tab.href))
 
-        return (
-          <Link
-            key={tab.href}
-            id={tab.id}
-            href={tab.href}
-            className={`tab-item ${isActive ? 'active' : ''}`}
-          >
-            <div className={`transition-transform ${isActive ? 'scale-110' : 'scale-100 opacity-60'}`}>
-              <Sticker name={tab.sticker} size={28} loop={isActive} />
-            </div>
-            <span>{t(tab.labelKey)}</span>
-          </Link>
-        )
-      })}
+          return (
+            <Link
+              key={tab.href}
+              id={tab.id}
+              href={tab.href}
+              className={`
+                flex flex-col items-center justify-center gap-1
+                min-w-[60px] py-2 touch-target
+                transition-all duration-200
+                ${isActive ? 'text-[var(--tab-active)]' : 'text-[var(--tab-inactive)]'}
+              `}
+            >
+              <div className={`transition-transform ${isActive ? 'scale-110' : 'scale-100 opacity-60'}`}>
+                <Sticker name={tab.sticker} size={28} loop={isActive} />
+              </div>
+              <span className="text-xs font-medium">{t(tab.labelKey)}</span>
+            </Link>
+          )
+        })}
+      </div>
     </nav>
   )
 }

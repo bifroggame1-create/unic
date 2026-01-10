@@ -53,29 +53,57 @@ class ApiClient {
       'X-Telegram-Id': String(userId),
     }
 
-    // Add Telegram user data to headers if available
-    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.initDataUnsafe?.user) {
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user
-      if (tgUser.username) {
-        headers['x-telegram-username'] = tgUser.username
+    // Add Telegram user data and initData to headers if available
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      const webApp = window.Telegram.WebApp
+
+      // Add initData for security validation (prevents user ID spoofing)
+      if (webApp.initData) {
+        headers['x-telegram-init-data'] = webApp.initData
       }
-      if (tgUser.first_name) {
-        headers['x-telegram-firstname'] = tgUser.first_name
-      }
-      if (tgUser.last_name) {
-        headers['x-telegram-lastname'] = tgUser.last_name
+
+      // Add user metadata
+      const tgUser = webApp.initDataUnsafe?.user
+      if (tgUser) {
+        if (tgUser.username) {
+          headers['x-telegram-username'] = tgUser.username
+        }
+        if (tgUser.first_name) {
+          headers['x-telegram-firstname'] = tgUser.first_name
+        }
+        if (tgUser.last_name) {
+          headers['x-telegram-lastname'] = tgUser.last_name
+        }
       }
     }
 
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    })
+    let response: Response
+    try {
+      response = await fetch(`${API_URL}${endpoint}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+        credentials: 'include', // Include credentials for CORS
+      })
+    } catch (error) {
+      console.error('Network error:', error)
+      throw new Error('Network connection failed. Please check your internet connection.')
+    }
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: 'Request failed' }))
-      throw new Error(error.error || 'Request failed')
+      const error = await response.json().catch(() => ({
+        error: `HTTP ${response.status}`,
+        message: response.statusText
+      }))
+
+      console.error('API Error:', {
+        endpoint,
+        status: response.status,
+        error: error.error,
+        message: error.message
+      })
+
+      throw new Error(error.message || error.error || `Request failed with status ${response.status}`)
     }
 
     const data = await response.json()
