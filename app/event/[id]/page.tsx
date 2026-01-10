@@ -354,11 +354,38 @@ export default function EventOverview() {
         <div className="px-6 -mt-8 mb-8">
           <div className="card p-8 bg-gradient-to-br from-[var(--primary)]/10 to-purple-500/10 border-2 border-[var(--primary)]/30 text-center space-y-5 shadow-xl">
             <Sticker name="mascot/20" size={100} className="mx-auto" />
-            <p className="text-base text-[var(--text-secondary)] font-medium">
-              React and comment in the channel to join the competition!
-            </p>
-            <button onClick={() => webApp?.close()} className="btn-primary w-full py-4 text-lg font-bold">
-              Back to Channel
+            <div className="space-y-3">
+              <h3 className="text-xl font-bold text-[var(--text-primary)]">
+                Присоединяйтесь к конкурсу!
+              </h3>
+              <p className="text-base text-[var(--text-secondary)] font-medium">
+                Нажмите кнопку ниже, подпишитесь на канал и начните зарабатывать баллы за реакции и комментарии!
+              </p>
+              <div className="bg-[var(--bg-secondary)] rounded-xl p-4 text-left space-y-2">
+                <p className="text-sm text-[var(--text-secondary)]">
+                  ❤️ Реакции = <span className="font-bold text-[var(--text-primary)]">1 балл</span>
+                </p>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  💬 Комментарии = <span className="font-bold text-[var(--text-primary)]">3 балла</span>
+                </p>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  💭 Ответы = <span className="font-bold text-[var(--text-primary)]">2 балла</span>
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={async () => {
+                try {
+                  await api.joinEvent(eventId)
+                  webApp?.showAlert('Вы успешно присоединились! Теперь подпишитесь на канал и начните зарабатывать баллы.')
+                  fetchData() // Reload to show user position
+                } catch (error: any) {
+                  webApp?.showAlert(error.message || 'Не удалось присоединиться к событию')
+                }
+              }}
+              className="btn-primary w-full py-4 text-lg font-bold"
+            >
+              🎯 Участвовать в конкурсе
             </button>
           </div>
         </div>

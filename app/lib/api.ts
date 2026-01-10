@@ -220,6 +220,15 @@ class ApiClient {
     return this.request<EventWithPositionResponse>(url)
   }
 
+  async joinEvent(eventId: string) {
+    if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
+
+    return this.request<{ success: boolean; message: string }>(
+      `/api/events/${this.encodeQueryParam(eventId)}/join`,
+      { method: 'POST' }
+    )
+  }
+
   // Boost monetization (MVP: x1.5 until event ends, 100 Stars)
   async createBoostInvoice(eventId: string) {
     if (!eventId || typeof eventId !== 'string') throw new Error('Invalid event ID')
