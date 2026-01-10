@@ -114,8 +114,14 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
           platform: tgWebApp.platform,
           hasUser: !!tgUser,
           userId: tgUser?.id,
-          initDataLength: tgWebApp.initData?.length || 0
+          initDataLength: tgWebApp.initData?.length || 0,
+          initDataUnsafe: tgWebApp.initDataUnsafe,
+          isExpanded: tgWebApp.isExpanded
         })
+
+        console.log('[TelegramContext] Full initData (first 200 chars):',
+          tgWebApp.initData?.substring(0, 200)
+        )
 
         if (tgUser) {
           setUser(tgUser)

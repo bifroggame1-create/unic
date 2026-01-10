@@ -60,11 +60,19 @@ class ApiClient {
       // Add initData for security validation (prevents user ID spoofing)
       if (webApp.initData) {
         headers['x-telegram-init-data'] = webApp.initData
+        console.log('[API] Sending initData:', webApp.initData.substring(0, 100) + '...')
+      } else {
+        console.warn('[API] No initData available from Telegram WebApp!')
       }
 
       // Add user metadata
       const tgUser = webApp.initDataUnsafe?.user
       if (tgUser) {
+        console.log('[API] Sending user metadata:', {
+          id: tgUser.id,
+          username: tgUser.username,
+          first_name: tgUser.first_name
+        })
         if (tgUser.username) {
           headers['x-telegram-username'] = tgUser.username
         }
@@ -74,8 +82,16 @@ class ApiClient {
         if (tgUser.last_name) {
           headers['x-telegram-lastname'] = tgUser.last_name
         }
+      } else {
+        console.warn('[API] No user in initDataUnsafe!')
       }
     }
+
+    console.log(`[API] ${method} ${endpoint}`, {
+      userId,
+      hasInitData: !!headers['x-telegram-init-data'],
+      hasUsername: !!headers['x-telegram-username']
+    })
 
     let response: Response
     try {
