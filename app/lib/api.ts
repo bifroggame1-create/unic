@@ -148,6 +148,13 @@ class ApiClient {
     return this.request<{ events: Event[] }>('/api/events')
   }
 
+  async getPublicEvents() {
+    return this.request<{ events: PublicEvent[] }>('/api/events/public', {
+      cache: true,
+      cacheTTL: 60 * 1000, // 1 minute cache for discovery feed
+    })
+  }
+
   async getEvent(id: string) {
     if (!id || typeof id !== 'string') throw new Error('Invalid event ID')
     return this.request<{ event: Event }>(`/api/events/${this.encodeQueryParam(id)}`)
@@ -463,6 +470,32 @@ export interface GiftOption {
   starValue: number
   available: boolean
   description: string
+}
+
+export interface PublicEvent {
+  _id: string
+  channelId: number
+  title?: string
+  duration: '24h' | '48h' | '72h' | '7d'
+  activityType: 'reactions' | 'comments' | 'all'
+  winnersCount: number
+  startsAt?: string
+  endsAt?: string
+  participantsCount: number
+  totalReactions: number
+  totalComments: number
+  prizes: {
+    giftId: string
+    name: string
+    position: number
+    value?: number
+  }[]
+  boostsEnabled: boolean
+  timeRemaining?: {
+    hours: number
+    minutes: number
+    totalMs: number
+  }
 }
 
 export const api = new ApiClient()

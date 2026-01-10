@@ -3,6 +3,7 @@ export function t(key: string): string {
   const translations: Record<string, string> = {
     // Навигация
     'nav.home': 'Главная',
+    'nav.discover': 'Обзор',
     'nav.events': 'События',
     'nav.channels': 'Каналы',
     'nav.plans': 'Тарифы',

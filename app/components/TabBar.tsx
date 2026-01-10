@@ -14,6 +14,7 @@ interface Tab {
 
 const tabs: Tab[] = [
   { href: '/', sticker: 'tabHome', labelKey: 'nav.home', id: 'tab-home' },
+  { href: '/discover', sticker: 'trophy', labelKey: 'nav.discover', id: 'tab-discover' },
   { href: '/events', sticker: 'tabEvents', labelKey: 'nav.events', id: 'tab-events' },
   { href: '/channels', sticker: 'tabChannels', labelKey: 'nav.channels', id: 'tab-channels' },
   { href: '/packages', sticker: 'tabPlans', labelKey: 'nav.plans', id: 'tab-plans' },
