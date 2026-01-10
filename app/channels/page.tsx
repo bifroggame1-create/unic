@@ -103,7 +103,7 @@ export default function Channels() {
   }
 
   return (
-    <div className="fade-in px-3 pb-40">
+    <div className="fade-in px-4 pt-4 pb-nav-safe max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-lg font-bold text-[var(--text-primary)]">{t('channels.title')}</h1>
         <Button
