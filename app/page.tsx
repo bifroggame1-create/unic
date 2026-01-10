@@ -44,7 +44,7 @@ export default function Home() {
     return (
       <Container>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Sticker name="home/loading" size={120} />
+          <Sticker name="loading" size={120} />
         </div>
       </Container>
     )
@@ -72,7 +72,7 @@ export default function Home() {
         className="flex items-center gap-4 mb-8"
       >
         <div className="w-20 h-20 flex items-center justify-center">
-          <Sticker name="home/hero" size={64} />
+          <Sticker name="mascot/10" size={64} />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -101,7 +101,7 @@ export default function Home() {
             className="card rounded-2xl p-5 text-center"
           >
             <div className="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
-              <Sticker name="home/stat1" size={48} />
+              <Sticker name="mascot/60" size={48} />
             </div>
             <div className="text-3xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] bg-clip-text text-transparent mb-1">
               {stats?.eventsCreated || 0}
@@ -114,7 +114,7 @@ export default function Home() {
             className="card rounded-2xl p-5 text-center"
           >
             <div className="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
-              <Sticker name="home/stat2" size={48} />
+              <Sticker name="ducks/5" size={48} />
             </div>
             <div className="text-3xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] bg-clip-text text-transparent mb-1">
               {stats?.totalParticipants ? (stats.totalParticipants >= 1000 ? `${(stats.totalParticipants / 1000).toFixed(1)}K` : stats.totalParticipants) : 0}
@@ -127,7 +127,7 @@ export default function Home() {
             className="card rounded-2xl p-5 text-center"
           >
             <div className="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
-              <Sticker name="home/stat3" size={48} />
+              <Sticker name="trophy" size={48} />
             </div>
             <div className="text-3xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] bg-clip-text text-transparent mb-1">
               {stats?.engagementRate || 0}%
@@ -158,7 +158,7 @@ export default function Home() {
           >
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                <Sticker name="home/action1" size={48} />
+                <Sticker name="mascot/20" size={48} />
               </div>
               <div className="text-left">
                 <div className="font-bold text-lg">{t('home.newEvent')}</div>
@@ -179,7 +179,7 @@ export default function Home() {
           >
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Sticker name="home/action2" size={42} />
+                <Sticker name="mascot/30" size={42} />
               </div>
               <div className="text-left">
                 <div className="font-bold text-base text-[var(--text-primary)]">{t('home.myEvents')}</div>
@@ -200,7 +200,7 @@ export default function Home() {
           >
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Sticker name="home/action3" size={42} />
+                <Sticker name="mascot/40" size={42} />
               </div>
               <div className="text-left">
                 <div className="font-bold text-base text-[var(--text-primary)]">{t('home.myChannels')}</div>
@@ -227,7 +227,7 @@ export default function Home() {
         >
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-              <Sticker name="home/upgrade" size={48} />
+              <Sticker name="gifts/5" size={48} />
             </div>
             <div className="text-left">
               <div className="font-bold text-lg">{t('home.upgradePlan')}</div>

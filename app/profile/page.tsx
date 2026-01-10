@@ -163,7 +163,7 @@ export default function Profile() {
           {/* Badge 1 - Active User */}
           <div className="card p-4 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 mb-2 flex items-center justify-center">
-              <Sticker name="profile/badge1" size={48} />
+              <Sticker name="ducks/45" size={48} />
             </div>
             <div className="text-[10px] font-semibold text-[var(--text-primary)]">Активный</div>
           </div>
@@ -171,7 +171,7 @@ export default function Profile() {
           {/* Badge 2 - Event Creator */}
           <div className="card p-4 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 mb-2 flex items-center justify-center">
-              <Sticker name="profile/badge2" size={48} />
+              <Sticker name="ducks/85" size={48} />
             </div>
             <div className="text-[10px] font-semibold text-[var(--text-primary)]">Создатель</div>
           </div>
@@ -179,7 +179,7 @@ export default function Profile() {
           {/* Badge 3 - Referral Master */}
           <div className="card p-4 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 mb-2 flex items-center justify-center">
-              <Sticker name="profile/badge3" size={48} />
+              <Sticker name="crown" size={48} />
             </div>
             <div className="text-[10px] font-semibold text-[var(--text-primary)]">Реферер</div>
           </div>
@@ -187,7 +187,7 @@ export default function Profile() {
           {/* Badge 4 - Premium */}
           <div className={`card p-4 flex flex-col items-center justify-center text-center ${stats?.plan === 'free' ? 'opacity-30' : ''}`}>
             <div className="w-12 h-12 mb-2 flex items-center justify-center">
-              <Sticker name="profile/badge4" size={48} />
+              <Sticker name="medal" size={48} />
             </div>
             <div className="text-[10px] font-semibold text-[var(--text-primary)]">Premium</div>
           </div>
@@ -195,7 +195,7 @@ export default function Profile() {
           {/* Badge 5 - Early Adopter */}
           <div className="card p-4 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 mb-2 flex items-center justify-center">
-              <Sticker name="profile/badge5" size={48} />
+              <Sticker name="success" size={48} />
             </div>
             <div className="text-[10px] font-semibold text-[var(--text-primary)]">Первый</div>
           </div>
@@ -203,7 +203,7 @@ export default function Profile() {
           {/* Badge 6 - Community */}
           <div className="card p-4 flex flex-col items-center justify-center text-center opacity-30">
             <div className="w-12 h-12 mb-2 flex items-center justify-center">
-              <Sticker name="profile/badge6" size={48} />
+              <Sticker name="welcome" size={48} />
             </div>
             <div className="text-[10px] font-semibold text-[var(--text-primary)]">Сообщество</div>
           </div>
@@ -318,7 +318,7 @@ export default function Profile() {
       >
         <div className="flex items-start gap-3 mb-3">
           <div className="w-12 h-12 flex-shrink-0">
-            <Sticker name="profile/referral" size={48} />
+            <Sticker name="info" size={48} />
           </div>
           <div>
             <h3 className="font-semibold text-base text-[var(--text-primary)] mb-1">
@@ -358,7 +358,7 @@ export default function Profile() {
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 flex-shrink-0">
-              <Sticker name="profile/warning" size={40} />
+              <Sticker name="warning" size={40} />
             </div>
             <div>
               <p className="font-semibold text-sm text-[var(--text-primary)]">{t('profile.planExpires')}</p>
