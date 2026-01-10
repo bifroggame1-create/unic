@@ -324,6 +324,7 @@ export interface User {
   eventsThisMonth: number
   referralCode: string
   referralsCount: number
+  isAdmin?: boolean
   userRole: 'admin' | 'user'
   hasUsedDemo: boolean
 }
