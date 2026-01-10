@@ -100,10 +100,18 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const init = async () => {
+      console.log('[TelegramContext] Initializing...', {
+        hasWindow: typeof window !== 'undefined',
+        hasTelegram: typeof window !== 'undefined' && !!window.Telegram,
+        hasWebApp: typeof window !== 'undefined' && !!window.Telegram?.WebApp,
+      })
+
       // Check if running in Telegram
       if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
         const tgWebApp = window.Telegram.WebApp
         setWebApp(tgWebApp)
+
+        console.log('[TelegramContext] Telegram WebApp found!')
 
         // Get user from Telegram
         const tgUser = tgWebApp.initDataUnsafe.user
