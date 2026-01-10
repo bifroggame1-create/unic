@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Sticker, { StickerName } from '../components/Sticker'
 import { useHaptic, useTelegram } from '../contexts/TelegramContext'
-import { useTonAddress, useTonConnectUI } from '@tonconnect/ui-react'
 import { t } from '../lib/translations'
+import { api } from '../lib/api'
 
 interface Package {
   nameKey: string
@@ -18,8 +18,13 @@ interface Package {
   gradient: string
 }
 
-const packages: Package[] = [
+interface PackageData extends Package {
+  planId: string
+}
+
+const packages: PackageData[] = [
   {
+    planId: 'free',
     nameKey: 'packages.free',
     price: 0,
     periodKey: '',
@@ -31,9 +36,10 @@ const packages: Package[] = [
     gradient: 'from-gray-400 to-gray-500',
   },
   {
+    planId: 'trial',
     nameKey: 'packages.trial',
-    price: 199,
-    periodKey: 'packages.perWeek',
+    price: 100,
+    periodKey: 'packages.perMonth',
     sticker: 'giftTrial',
     featureKeys: ['feature.eventsPerWeek', 'feature.upTo1000', 'feature.allActivityTypes', 'feature.prioritySupport'],
     ctaKey: 'packages.startTrial',
@@ -42,8 +48,9 @@ const packages: Package[] = [
     gradient: 'from-blue-400 to-blue-600',
   },
   {
+    planId: 'basic',
     nameKey: 'packages.basic',
-    price: 490,
+    price: 500,
     periodKey: 'packages.perMonth',
     sticker: 'giftBasic',
     featureKeys: ['feature.eventsPerMonth', 'feature.upTo5000', 'feature.extendedAnalytics', 'feature.removeBadge'],
@@ -53,8 +60,9 @@ const packages: Package[] = [
     gradient: 'from-emerald-400 to-emerald-600',
   },
   {
+    planId: 'advanced',
     nameKey: 'packages.advanced',
-    price: 1490,
+    price: 2000,
     periodKey: 'packages.perMonth',
     sticker: 'giftAdvanced',
     featureKeys: ['feature.unlimitedEvents', 'feature.upTo50000', 'feature.3channels', 'feature.customBranding', 'feature.apiAccess'],
@@ -64,8 +72,9 @@ const packages: Package[] = [
     gradient: 'from-purple-400 to-purple-600',
   },
   {
+    planId: 'premium',
     nameKey: 'packages.premium',
-    price: 3990,
+    price: 5000,
     periodKey: 'packages.perMonth',
     sticker: 'giftPremium',
     featureKeys: ['feature.everythingAdvanced', 'feature.unlimitedParticipants', 'feature.10channels', 'feature.whiteLabel', 'feature.dedicatedManager'],
@@ -79,12 +88,9 @@ const packages: Package[] = [
 export default function Packages() {
   const haptic = useHaptic()
   const { webApp } = useTelegram()
-  const userFriendlyAddress = useTonAddress()
-  const [tonConnectUI] = useTonConnectUI()
-  const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly')
   const [processing, setProcessing] = useState(false)
 
-  const handleSubscribe = async (pkg: Package) => {
+  const handleSubscribe = async (pkg: PackageData) => {
     haptic.impact('medium')
 
     if (pkg.disabled) return
@@ -95,47 +101,42 @@ export default function Packages() {
       return
     }
 
-    // Check if wallet is connected
-    if (!userFriendlyAddress) {
-      webApp?.showAlert('Please connect your TON wallet first (top right corner)')
-      return
-    }
-
     setProcessing(true)
 
     try {
-      const amount = billing === 'yearly' ? Math.round(pkg.price * 10) : pkg.price
+      // Create Telegram Stars invoice
+      const { invoiceLink, paymentId } = await api.createPlanInvoice(pkg.planId)
 
-      // Create TON transaction
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 600, // 10 minutes
-        messages: [
-          {
-            address: process.env.NEXT_PUBLIC_TON_RECEIVER || 'UQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG',
-            amount: String(amount * 1000000000), // Convert to nanotons (1 TON = 1B nanotons)
-            payload: `Subscription: ${pkg.nameKey} (${billing})`,
-          },
-        ],
-      }
+      // Open Telegram Stars payment
+      webApp?.openInvoice?.(invoiceLink, async (status: string) => {
+        if (status === 'paid') {
+          try {
+            // Apply plan upgrade after payment
+            const result = await api.upgradePlan(pkg.planId, paymentId)
+            webApp?.showAlert(result.message)
+            haptic.notification('success')
 
-      // Send transaction
-      await tonConnectUI.sendTransaction(transaction)
-
-      webApp?.showAlert('Payment sent! Your plan will be activated shortly.')
-      haptic.notification('success')
-
-      // TODO: Backend verification and plan activation
-      // This should call backend API to verify payment and activate subscription
-
+            // Redirect to profile or home
+            setTimeout(() => {
+              window.location.href = '/profile'
+            }, 1500)
+          } catch (error: any) {
+            webApp?.showAlert(error.message || 'Failed to activate plan')
+            haptic.notification('error')
+          }
+        } else if (status === 'cancelled') {
+          webApp?.showAlert('Payment cancelled')
+          haptic.notification('warning')
+        } else if (status === 'failed') {
+          webApp?.showAlert('Payment failed. Please try again.')
+          haptic.notification('error')
+        }
+        setProcessing(false)
+      })
     } catch (error: any) {
       console.error('Payment error:', error)
-      if (error.message?.includes('reject')) {
-        webApp?.showAlert('Payment cancelled')
-      } else {
-        webApp?.showAlert('Payment failed. Please try again.')
-      }
+      webApp?.showAlert('Failed to create invoice. Please try again.')
       haptic.notification('error')
-    } finally {
       setProcessing(false)
     }
   }

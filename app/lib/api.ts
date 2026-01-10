@@ -1,5 +1,4 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-const IS_DEV = process.env.NODE_ENV === 'development'
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -9,34 +8,6 @@ interface RequestOptions {
 
 // Dev mode user ID
 const DEV_USER_ID = 123456789
-
-// Mock data for dev mode when backend is not running
-const MOCK_DATA: Record<string, any> = {
-  '/api/users/me': {
-    user: {
-      _id: 'dev_user',
-      telegramId: DEV_USER_ID,
-      username: 'devuser',
-      firstName: 'Dev',
-      lastName: 'User',
-      plan: 'free',
-      eventsCreated: 2,
-      eventsThisMonth: 1,
-      referralCode: 'DEV123',
-      referralsCount: 5,
-    },
-  },
-  '/api/users/me/stats': {
-    plan: 'free',
-    eventsThisMonth: 1,
-    eventsCreated: 2,
-    referralsCount: 5,
-    referralCode: 'DEV123',
-    limits: { events: 1, channels: 1, participants: 100 },
-  },
-  '/api/channels': { channels: [] },
-  '/api/events': { events: [] },
-}
 
 class ApiClient {
   private telegramId: number | null = null
@@ -78,30 +49,18 @@ class ApiClient {
       'X-Telegram-Id': String(userId),
     }
 
-    try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
-        method,
-        headers,
-        body: body ? JSON.stringify(body) : undefined,
-      })
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    })
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: 'Request failed' }))
-        throw new Error(error.error || 'Request failed')
-      }
-
-      return response.json()
-    } catch (error) {
-      // In dev mode, return mock data if backend is unavailable
-      if (IS_DEV && method === 'GET') {
-        const mockKey = endpoint.split('?')[0] // Remove query params
-        if (MOCK_DATA[mockKey]) {
-          console.log(`[DEV] Using mock data for ${endpoint}`)
-          return MOCK_DATA[mockKey] as T
-        }
-      }
-      throw error
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Request failed' }))
+      throw new Error(error.error || 'Request failed')
     }
+
+    return response.json()
   }
 
   // Users
@@ -111,6 +70,35 @@ class ApiClient {
 
   async getMyStats() {
     return this.request<UserStats>('/api/users/me/stats')
+  }
+
+  async getDashboard() {
+    return this.request<DashboardStats>('/api/users/me/dashboard')
+  }
+
+  async createPlanInvoice(planId: string) {
+    if (!planId || typeof planId !== 'string') throw new Error('Invalid plan ID')
+
+    return this.request<{ invoiceLink: string; paymentId: string; amount: number; planId: string }>(
+      '/api/users/plan-invoice',
+      {
+        method: 'POST',
+        body: { planId },
+      }
+    )
+  }
+
+  async upgradePlan(planId: string, paymentId: string) {
+    if (!planId || typeof planId !== 'string') throw new Error('Invalid plan ID')
+    if (!paymentId || typeof paymentId !== 'string') throw new Error('Invalid payment ID')
+
+    return this.request<{ success: boolean; plan: string; planExpiresAt: string; message: string }>(
+      '/api/users/upgrade',
+      {
+        method: 'POST',
+        body: { planId, paymentId },
+      }
+    )
   }
 
   // Channels
@@ -305,6 +293,17 @@ export interface UserStats {
     channels: number
     participants: number
   }
+}
+
+export interface DashboardStats {
+  eventsCreated: number
+  activeEvents: number
+  totalParticipants: number
+  engagementRate: number
+  totalReactions: number
+  totalComments: number
+  plan: string
+  referralsCount: number
 }
 
 export interface Channel {
