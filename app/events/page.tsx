@@ -57,7 +57,7 @@ export default function Events() {
 
   if (loading) {
     return (
-      <div className="fade-in">
+      <div className="fade-in pb-40">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-[var(--text-primary)]">{t('events.title')}</h1>
         </div>
@@ -80,7 +80,7 @@ export default function Events() {
 
   if (error) {
     return (
-      <div className="fade-in">
+      <div className="fade-in pb-40">
         <div className="card p-8 text-center">
           <div className="flex justify-center mb-4">
             <Sticker name="error" size={80} />
@@ -96,7 +96,7 @@ export default function Events() {
   }
 
   return (
-    <div className="fade-in px-3">
+    <div className="fade-in px-3 pb-40">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-lg font-bold text-[var(--text-primary)]">{t('events.title')}</h1>
         <button

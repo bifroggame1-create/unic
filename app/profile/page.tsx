@@ -103,7 +103,7 @@ export default function Profile() {
   const planInfo = stats ? getPlanDisplay(stats.plan) : getPlanDisplay('free')
 
   return (
-    <div className="fade-in px-3">
+    <div className="fade-in px-3 pb-40">
       <h1 className="text-lg font-bold text-[var(--text-primary)] mb-1">{t('profile.title')}</h1>
       <p className="text-xs text-[var(--text-secondary)] mb-6">{t('profile.manageAccount')}</p>
 

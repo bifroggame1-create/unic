@@ -81,7 +81,7 @@ export default function FullLeaderboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] pb-40">
         <Sticker name="loading" size={120} />
       </div>
     )
@@ -89,7 +89,7 @@ export default function FullLeaderboard() {
 
   if (!data) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] pb-40">
         <div className="text-center space-y-4">
           <div className="text-6xl">🔍</div>
           <p className="text-[var(--text-secondary)] text-lg">Event not found</p>
@@ -102,7 +102,7 @@ export default function FullLeaderboard() {
   const isActive = event.status === 'active'
 
   return (
-    <div className="fade-in pb-12 -mx-4">
+    <div className="fade-in pb-40 -mx-4">
       {/* Header */}
       <div className={`relative overflow-hidden ${isActive ? 'bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500' : 'bg-gradient-to-br from-gray-600 to-gray-800'} text-white px-6 pt-6 pb-10 shadow-2xl sticky top-0 z-10`}>
         <div className="absolute inset-0 opacity-10">

@@ -58,7 +58,7 @@ export default function DiscoverPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 pb-40">
         <Sticker name="loading" size={100} />
         <p className="text-[var(--text-secondary)]">Загружаем события...</p>
       </div>
@@ -67,7 +67,7 @@ export default function DiscoverPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 pb-40">
         <Sticker name="error" size={100} />
         <p className="text-[var(--text-secondary)]">{error}</p>
         <button onClick={loadEvents} className="btn-primary">
@@ -78,7 +78,7 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-40">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">
           🔥 Активные конкурсы

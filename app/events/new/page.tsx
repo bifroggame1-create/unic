@@ -112,7 +112,7 @@ export default function NewEvent() {
   }
 
   return (
-    <div className="fade-in">
+    <div className="fade-in pb-40">
       {/* Progress */}
       <div className="flex items-center gap-2 mb-6">
         {[1, 2, 3].map((s) => (
