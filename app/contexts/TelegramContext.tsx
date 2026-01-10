@@ -107,11 +107,38 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
 
         // Get user from Telegram
         const tgUser = tgWebApp.initDataUnsafe.user
+
+        // Debug logging
+        console.log('[TelegramContext] WebApp detected:', {
+          version: tgWebApp.version,
+          platform: tgWebApp.platform,
+          hasUser: !!tgUser,
+          userId: tgUser?.id,
+          initDataLength: tgWebApp.initData?.length || 0
+        })
+
         if (tgUser) {
           setUser(tgUser)
           api.setTelegramId(tgUser.id)
 
           // Fetch/create user in database
+          try {
+            const { user: fetchedUser } = await api.getMe()
+            setDbUser(fetchedUser)
+          } catch (error) {
+            console.error('Failed to fetch user:', error)
+          }
+        } else {
+          console.warn('[TelegramContext] No user in initDataUnsafe, using dev fallback')
+          // Fallback to dev user when Telegram doesn't provide user
+          const devUser: TelegramUser = {
+            id: 123456789,
+            first_name: 'Dev',
+            username: 'developer',
+          }
+          setUser(devUser)
+          api.setTelegramId(devUser.id)
+
           try {
             const { user: fetchedUser } = await api.getMe()
             setDbUser(fetchedUser)
