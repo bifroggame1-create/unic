@@ -149,39 +149,6 @@ export default function Packages() {
         <p className="text-sm text-[var(--text-secondary)]">{t('packages.subtitle')}</p>
       </div>
 
-      {/* Billing Toggle - Mobile Optimized */}
-      <div className="flex justify-center mb-8">
-        <div className="inline-flex bg-[var(--bg-start)] p-1.5 rounded-2xl border border-[var(--card-border)]">
-          <button
-            className={`px-8 py-3 rounded-xl text-sm font-semibold transition-all ${
-              billing === 'monthly'
-                ? 'bg-[var(--primary)] text-white shadow-md'
-                : 'text-[var(--text-secondary)]'
-            }`}
-            onClick={() => {
-              setBilling('monthly')
-              haptic.selection()
-            }}
-          >
-            {t('packages.monthly')}
-          </button>
-          <button
-            className={`px-8 py-3 rounded-xl text-sm font-semibold transition-all ${
-              billing === 'yearly'
-                ? 'bg-[var(--primary)] text-white shadow-md'
-                : 'text-[var(--text-secondary)]'
-            }`}
-            onClick={() => {
-              setBilling('yearly')
-              haptic.selection()
-            }}
-          >
-            {t('packages.yearly')}
-            <span className="ml-2 text-xs opacity-80">-17%</span>
-          </button>
-        </div>
-      </div>
-
       {/* Packages List */}
       <div className="space-y-6">
         {packages.map((pkg) => (
@@ -211,12 +178,10 @@ export default function Packages() {
                     ) : (
                       <>
                         <span className="text-2xl font-bold text-[var(--text-primary)]">
-                          {billing === 'yearly'
-                            ? Math.round(pkg.price * 10)
-                            : pkg.price}₽
+                          {pkg.price} ⭐
                         </span>
                         <span className="text-sm text-[var(--text-secondary)]">
-                          {billing === 'yearly' ? t('packages.perYear') : pkg.periodKey ? t(pkg.periodKey) : ''}
+                          {pkg.periodKey ? t(pkg.periodKey) : ''}
                         </span>
                       </>
                     )}

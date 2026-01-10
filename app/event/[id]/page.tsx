@@ -52,68 +52,91 @@ export default function EventOverview() {
   useEffect(() => {
     if (!data || !user?.id || !data.userPosition) return
 
-    const { event, userPosition } = data
+    const { event, userPosition, topTen } = data
     if (event.status !== 'active') return
 
-    // Calculate next rank points gap
-    const nextRankPoints = Math.max(0, userPosition.points - (userPosition.rank > 1 ? 1 : 0))
+    // Calculate actual points gap to next rank
+    const nextRankUser = topTen.find(u => u.rank === userPosition.rank - 1)
+    const nextRankPoints = nextRankUser ? (nextRankUser.points - userPosition.points) : 0
 
     // Calculate hours left
     const hoursLeft = event.timeRemaining
       ? event.timeRemaining.totalMs / (1000 * 60 * 60)
       : 0
 
-    // User actions count (reactions + comments)
-    const userActionsCount = (data.userPosition?.rank || 999) < 100 ? 5 : 0 // Simplified for now
+    // Get actual user actions count from timeline
+    const fetchActionsCount = async () => {
+      try {
+        const timeline = await api.getActivityTimeline(eventId)
+        const totalActions = timeline.timeline.reduce((sum, item) => sum + item.count, 0)
 
-    const boostInput: BoostTriggerInput = {
-      userRank: userPosition.rank,
-      totalUsers: userPosition.totalParticipants,
-      pointsToNextRank: nextRankPoints,
-      hoursLeft,
-      userActionsCount,
-      lastBoostPromptAt,
+        const boostInput: BoostTriggerInput = {
+          userRank: userPosition.rank,
+          totalUsers: userPosition.totalParticipants,
+          pointsToNextRank: nextRankPoints,
+          hoursLeft,
+          userActionsCount: totalActions,
+          lastBoostPromptAt,
+        }
+
+        if (shouldShowBoost(boostInput) && !showBoostModal) {
+          setShowBoostModal(true)
+          setLastBoostPromptAt(Date.now())
+          trackEvent('boost_shown', eventId, user.id)
+        }
+      } catch (error) {
+        console.error('Failed to fetch actions count:', error)
+      }
     }
 
-    if (shouldShowBoost(boostInput) && !showBoostModal) {
-      setShowBoostModal(true)
-      setLastBoostPromptAt(Date.now())
-      trackEvent('boost_shown', eventId, user.id)
-    }
+    fetchActionsCount()
   }, [data, user?.id, lastBoostPromptAt, showBoostModal, eventId])
 
   // Check Second Chance trigger conditions
   useEffect(() => {
     if (!data || !user?.id || !data.userPosition) return
 
-    const { event, userPosition } = data
+    const { event, userPosition, topTen } = data
     if (event.status !== 'completed') return
 
-    // Calculate points to prize rank
+    // Calculate actual points to prize rank
     const lastPrizeRank = event.winnersCount
-    const pointsToPrizeRank = userPosition.rank > lastPrizeRank ? 15 : 0 // Simplified
+    let pointsToPrizeRank = 0
+    if (userPosition.rank > lastPrizeRank) {
+      const lastWinner = topTen.find(u => u.rank === lastPrizeRank)
+      pointsToPrizeRank = lastWinner ? (lastWinner.points - userPosition.points) : 0
+    }
 
     // Minutes since event end
     const minutesSinceEventEnd = event.endsAt
       ? (Date.now() - new Date(event.endsAt).getTime()) / (1000 * 60)
       : 999
 
-    // User actions count
-    const userActionsCount = (userPosition?.rank || 999) < 100 ? 5 : 0 // Simplified
+    // Get actual user actions count from timeline
+    const fetchActionsCount = async () => {
+      try {
+        const timeline = await api.getActivityTimeline(eventId)
+        const totalActions = timeline.timeline.reduce((sum, item) => sum + item.count, 0)
 
-    const secondChanceInput: SecondChanceInput = {
-      userRank: userPosition.rank,
-      totalUsers: userPosition.totalParticipants,
-      pointsToPrizeRank,
-      userActionsCount,
-      minutesSinceEventEnd,
-      alreadyUsed: secondChanceUsed,
+        const secondChanceInput: SecondChanceInput = {
+          userRank: userPosition.rank,
+          totalUsers: userPosition.totalParticipants,
+          pointsToPrizeRank,
+          userActionsCount: totalActions,
+          minutesSinceEventEnd,
+          alreadyUsed: secondChanceUsed,
+        }
+
+        if (shouldShowSecondChance(secondChanceInput) && !showSecondChanceModal) {
+          setShowSecondChanceModal(true)
+          trackEvent('second_chance_shown', eventId, user.id)
+        }
+      } catch (error) {
+        console.error('Failed to fetch actions count:', error)
+      }
     }
 
-    if (shouldShowSecondChance(secondChanceInput) && !showSecondChanceModal) {
-      setShowSecondChanceModal(true)
-      trackEvent('second_chance_shown', eventId, user.id)
-    }
+    fetchActionsCount()
   }, [data, user?.id, secondChanceUsed, showSecondChanceModal, eventId])
 
   useEffect(() => {
