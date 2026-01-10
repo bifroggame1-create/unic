@@ -1,9 +1,13 @@
+import { cache } from './cache'
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
   body?: any
   telegramId?: number
+  cache?: boolean // Enable caching for this request
+  cacheTTL?: number // Cache TTL in ms (default: 5 minutes)
 }
 
 // Dev mode user ID
@@ -34,7 +38,7 @@ class ApiClient {
   }
 
   async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    const { method = 'GET', body } = options
+    const { method = 'GET', body, cache: enableCache = false, cacheTTL = 5 * 60 * 1000 } = options
 
     // Use dev ID if no telegram ID set (dev mode)
     const userId = this.telegramId || DEV_USER_ID
@@ -60,7 +64,15 @@ class ApiClient {
       throw new Error(error.error || 'Request failed')
     }
 
-    return response.json()
+    const data = await response.json()
+
+    // Cache GET responses if enabled
+    if (method === 'GET' && enableCache) {
+      const cacheKey = `api:${endpoint}`
+      cache.set(cacheKey, data, cacheTTL)
+    }
+
+    return data
   }
 
   // Users
@@ -73,7 +85,10 @@ class ApiClient {
   }
 
   async getDashboard() {
-    return this.request<DashboardStats>('/api/users/me/dashboard')
+    return this.request<DashboardStats>('/api/users/me/dashboard', {
+      cache: true,
+      cacheTTL: 2 * 60 * 1000, // 2 minutes
+    })
   }
 
   async createPlanInvoice(planId: string) {
