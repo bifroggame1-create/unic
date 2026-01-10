@@ -53,6 +53,20 @@ class ApiClient {
       'X-Telegram-Id': String(userId),
     }
 
+    // Add Telegram user data to headers if available
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.initDataUnsafe?.user) {
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user
+      if (tgUser.username) {
+        headers['X-Telegram-Username'] = tgUser.username
+      }
+      if (tgUser.first_name) {
+        headers['X-Telegram-FirstName'] = tgUser.first_name
+      }
+      if (tgUser.last_name) {
+        headers['X-Telegram-LastName'] = tgUser.last_name
+      }
+    }
+
     const response = await fetch(`${API_URL}${endpoint}`, {
       method,
       headers,
