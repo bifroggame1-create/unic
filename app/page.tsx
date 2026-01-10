@@ -54,8 +54,8 @@ export default function Home() {
     return (
       <Container>
         <ErrorState
-          title="Connection Error"
-          message="Unable to load dashboard. Please check your connection and try again."
+          title={t('home.connectionError')}
+          message={t('home.connectionMessage')}
           onRetry={fetchStats}
           emoji="🔌"
         />

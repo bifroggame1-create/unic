@@ -175,6 +175,8 @@ export function t(key: string): string {
     'home.engagement': 'Вовлечение',
     'home.upgradePlan': 'Улучшить план',
     'home.upgrade': 'Получить больше возможностей',
+    'home.connectionError': 'Ошибка подключения',
+    'home.connectionMessage': 'Не удалось загрузить данные. Проверьте подключение и попробуйте снова.',
 
     // Тиры/Уровни
     'tiers.pro': 'Профи',
