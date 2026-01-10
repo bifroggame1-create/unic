@@ -24,7 +24,7 @@ export default function NewEvent() {
   const [newChannelUsername, setNewChannelUsername] = useState('')
   const [duration, setDuration] = useState<'24h' | '48h' | '72h' | '7d'>('48h')
   const [activityType, setActivityType] = useState<'reactions' | 'comments' | 'all'>('all')
-  const [winners, setWinners] = useState(5)
+  const [winners, setWinners] = useState(3)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [addingChannel, setAddingChannel] = useState(false)

@@ -342,6 +342,7 @@ export interface Event {
   channelId: number
   ownerId: number
   status: 'draft' | 'pending_payment' | 'active' | 'completed' | 'cancelled'
+  eventType?: 'public' | 'premium'
   duration: '24h' | '48h' | '72h' | '7d'
   activityType: 'reactions' | 'comments' | 'all'
   winnersCount: number
@@ -476,6 +477,7 @@ export interface PublicEvent {
   _id: string
   channelId: number
   title?: string
+  eventType?: 'public' | 'premium'
   duration: '24h' | '48h' | '72h' | '7d'
   activityType: 'reactions' | 'comments' | 'all'
   winnersCount: number
