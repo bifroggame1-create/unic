@@ -45,16 +45,12 @@ export default function TabBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 pb-safe"
-      style={{
-        zIndex: 'var(--z-nav)',
-        background: 'var(--tg-theme-bg-color)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid var(--card-border)'
-      }}
+      className="fixed bottom-0 left-0 right-0 z-40
+                 bg-[var(--tg-theme-bg-color)]/95 backdrop-blur-xl
+                 border-t border-[var(--tg-theme-hint-color)]/20"
+      style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
     >
-      <div className="flex justify-around items-center max-w-[480px] mx-auto">
+      <div className="flex justify-around items-center h-16 px-2 max-w-[480px] mx-auto">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href ||
             (tab.href !== '/' && pathname.startsWith(tab.href))
@@ -66,10 +62,11 @@ export default function TabBar() {
               href={tab.href}
               className={`
                 flex flex-col items-center justify-center gap-1
-                min-w-[60px] py-2 touch-target
-                transition-all duration-200
+                flex-1 touch-target rounded-xl
+                active:scale-90 transition-transform
                 ${isActive ? 'text-[var(--tab-active)]' : 'text-[var(--tab-inactive)]'}
               `}
+              style={{ minWidth: '60px' }}
             >
               <div className={`transition-transform ${isActive ? 'scale-110' : 'scale-100 opacity-60'}`}>
                 <Sticker name={tab.sticker} size={28} loop={isActive} />

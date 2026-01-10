@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { api, Event } from '../lib/api'
 import { t } from '../lib/translations'
 import Sticker from '../components/Sticker'
+import { ErrorState } from '../components/ErrorState'
 
 export default function Events() {
   const router = useRouter()
@@ -79,20 +80,11 @@ export default function Events() {
   }
 
   if (error) {
-    return (
-      <div className="fade-in pb-40">
-        <div className="card p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <Sticker name="error" size={80} />
-          </div>
-          <h3 className="font-medium text-[var(--text-primary)] mb-2">{t('events.errorLoading')}</h3>
-          <p className="text-sm text-[var(--text-secondary)] mb-4">{error}</p>
-          <button onClick={loadEvents} className="btn-primary">
-            {t('common.tryAgain')}
-          </button>
-        </div>
-      </div>
-    )
+    return <ErrorState
+      title={t('events.errorLoading')}
+      message={error}
+      onRetry={loadEvents}
+    />
   }
 
   return (

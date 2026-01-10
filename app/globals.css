@@ -479,3 +479,42 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   AGGRESSIVE UI REFACTOR - ENHANCED UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Additional spacing variables */
+:root {
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+}
+
+/* Enhanced touch target - forced minimum */
+.touch-target {
+  min-height: 44px !important;
+  min-width: 44px !important;
+}
+
+/* Universal tap optimization */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Active scale utility */
+.active\:scale-95:active {
+  transform: scale(0.95);
+}
+
+/* Bottom navigation safe area padding */
+.pb-nav-safe {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

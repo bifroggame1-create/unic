@@ -9,6 +9,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import Header from './components/Header'
 import TabBar from './components/TabBar'
 import Onboarding from './components/Onboarding'
+import { ConnectWalletButton } from './components/ConnectWallet'
 import { getDeviceInfo, getHeaderSpacing } from './lib/deviceDetection'
 
 const ONBOARDING_KEY = 'unic_onboarding_complete'
@@ -43,6 +44,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <ThemeProvider>
         <TelegramProvider>
           <TonConnectProvider>
+            <ConnectWalletButton />
             <AppRoot>
               <div className="min-h-screen flex flex-col bg-[var(--tg-theme-bg-color)] text-[var(--tg-theme-text-color)]">
                 {/* Container wrapper for large screens */}

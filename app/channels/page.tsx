@@ -7,6 +7,7 @@ import { t } from '../lib/translations'
 import { Modal, Button, Input } from '@telegram-apps/telegram-ui'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
+import { ErrorState } from '../components/ErrorState'
 
 const CheckIcon = () => (
   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -94,20 +95,11 @@ export default function Channels() {
   }
 
   if (error) {
-    return (
-      <div className="fade-in pb-40">
-        <div className="card p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <Sticker name="error" size={80} />
-          </div>
-          <h3 className="font-medium text-[var(--text-primary)] mb-2">{t('channels.errorLoading')}</h3>
-          <p className="text-sm text-[var(--text-secondary)] mb-4">{error}</p>
-          <button onClick={loadChannels} className="btn-primary">
-            {t('common.tryAgain')}
-          </button>
-        </div>
-      </div>
-    )
+    return <ErrorState
+      title={t('channels.errorLoading')}
+      message={error}
+      onRetry={loadChannels}
+    />
   }
 
   return (
