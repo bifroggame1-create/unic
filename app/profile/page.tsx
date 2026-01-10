@@ -8,6 +8,8 @@ import { useTheme } from '../contexts/ThemeContext'
 import { t } from '../lib/translations'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
+import Container from '../components/layout/Container'
+import ErrorState from '../components/ErrorState'
 
 const LANGUAGES: { code: string; label: string; flag: string }[] = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -75,28 +77,24 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="fade-in">
+      <Container>
         <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">{t('profile.title')}</h1>
         <p className="text-sm text-[var(--text-secondary)] mb-6">{t('profile.manageAccount')}</p>
         <Loading text={t('profile.loadingProfile')} />
-      </div>
+      </Container>
     )
   }
 
   if (error) {
     return (
-      <div className="fade-in">
-        <div className="card p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <Sticker name="error" size={80} />
-          </div>
-          <h3 className="font-medium text-[var(--text-primary)] mb-2">{t('profile.errorLoading')}</h3>
-          <p className="text-sm text-[var(--text-secondary)] mb-4">{error}</p>
-          <button onClick={loadStats} className="btn-primary">
-            {t('common.tryAgain')}
-          </button>
-        </div>
-      </div>
+      <Container>
+        <ErrorState
+          title={t('profile.errorLoading')}
+          message={error}
+          onRetry={loadStats}
+          emoji="😢"
+        />
+      </Container>
     )
   }
 

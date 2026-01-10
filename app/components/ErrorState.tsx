@@ -1,33 +1,42 @@
 'use client'
 
+import { t } from '../lib/translations'
+
 interface ErrorStateProps {
   title?: string
   message?: string
   onRetry?: () => void
   emoji?: string
+  centered?: boolean
 }
 
 export default function ErrorState({
-  title = 'Oops!',
-  message = 'Something went wrong',
+  title,
+  message,
   onRetry,
-  emoji = '😢'
+  emoji = '😢',
+  centered = true
 }: ErrorStateProps) {
+  // Use translated defaults if not provided
+  const displayTitle = title || t('common.error')
+  const displayMessage = message || t('common.errorMessage')
+  const retryText = t('common.tryAgain')
+
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+    <div className={`flex flex-col items-center px-4 text-center ${centered ? 'justify-center min-h-[50vh]' : 'py-12'}`}>
       {/* Big emoji */}
-      <div className="text-8xl mb-4 animate-bounce-slow">
+      <div className="text-7xl mb-4 animate-bounce-slow">
         {emoji}
       </div>
 
       {/* Title */}
-      <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
-        {title}
+      <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+        {displayTitle}
       </h2>
 
       {/* Message */}
-      <p className="text-[var(--text-secondary)] mb-6 max-w-sm">
-        {message}
+      <p className="text-[var(--text-secondary)] mb-8 max-w-sm text-sm leading-relaxed">
+        {displayMessage}
       </p>
 
       {/* Retry button */}
@@ -37,12 +46,12 @@ export default function ErrorState({
           className="
             px-6 py-3 rounded-xl
             bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)]
-            text-white font-semibold
+            text-white font-semibold text-sm
             active-scale touch-target
             shadow-lg
           "
         >
-          Try Again
+          {retryText}
         </button>
       )}
     </div>

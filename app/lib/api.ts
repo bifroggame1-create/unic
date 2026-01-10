@@ -83,7 +83,7 @@ class ApiClient {
         method,
         headers,
         body: body ? JSON.stringify(body) : undefined,
-        credentials: 'include', // Include credentials for CORS
+        // credentials: 'include', // Removed - causing CORS issues
       })
     } catch (error) {
       console.error('Network error:', error)
