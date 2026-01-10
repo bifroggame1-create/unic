@@ -8,7 +8,7 @@ import { useHaptic } from './contexts/TelegramContext'
 import { api, DashboardStats } from './lib/api'
 import Sticker from './components/Sticker'
 import Container from './components/layout/Container'
-import ErrorState from './components/ErrorState'
+import { ErrorState } from './components/ErrorState'
 
 export default function Home() {
   const router = useRouter()

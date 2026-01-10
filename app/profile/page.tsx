@@ -9,7 +9,7 @@ import { t } from '../lib/translations'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
 import Container from '../components/layout/Container'
-import ErrorState from '../components/ErrorState'
+import { ErrorState } from '../components/ErrorState'
 
 const LANGUAGES: { code: string; label: string; flag: string }[] = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
