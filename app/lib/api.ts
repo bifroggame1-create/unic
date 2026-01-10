@@ -57,13 +57,13 @@ class ApiClient {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp?.initDataUnsafe?.user) {
       const tgUser = window.Telegram.WebApp.initDataUnsafe.user
       if (tgUser.username) {
-        headers['X-Telegram-Username'] = tgUser.username
+        headers['x-telegram-username'] = tgUser.username
       }
       if (tgUser.first_name) {
-        headers['X-Telegram-FirstName'] = tgUser.first_name
+        headers['x-telegram-firstname'] = tgUser.first_name
       }
       if (tgUser.last_name) {
-        headers['X-Telegram-LastName'] = tgUser.last_name
+        headers['x-telegram-lastname'] = tgUser.last_name
       }
     }
 
