@@ -49,8 +49,12 @@ class ApiClient {
     }
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       'X-Telegram-Id': String(userId),
+    }
+
+    // Only set Content-Type if we have a body
+    if (body) {
+      headers['Content-Type'] = 'application/json'
     }
 
     // Add Telegram user data and initData to headers if available
