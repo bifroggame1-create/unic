@@ -9,7 +9,7 @@ export function ConnectWalletButton() {
     return (
       <button
         onClick={() => tonConnectUI.openModal()}
-        className="fixed top-4 right-4 z-[100]
+        className="fixed top-20 right-4 z-[100]
                    flex items-center gap-3 px-6 py-3.5
                    bg-gradient-to-r from-blue-500 to-blue-600
                    rounded-2xl text-white font-bold text-base
@@ -26,7 +26,7 @@ export function ConnectWalletButton() {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-[100] flex items-center gap-2
+    <div className="fixed top-20 right-4 z-[100] flex items-center gap-2
                    px-4 py-2.5 bg-green-500/20 backdrop-blur-xl
                    border-2 border-green-400 rounded-2xl shadow-lg">
       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
