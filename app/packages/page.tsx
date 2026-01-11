@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Sticker, { StickerName } from '../components/Sticker'
 import { useHaptic, useTelegram } from '../contexts/TelegramContext'
 import { t } from '../lib/translations'
+import { getUserFriendlyError } from '../lib/constants'
 import { api } from '../lib/api'
 
 interface Package {
@@ -121,7 +122,7 @@ export default function Packages() {
               window.location.href = '/profile'
             }, 1500)
           } catch (error: any) {
-            webApp?.showAlert(error.message || 'Failed to activate plan')
+            webApp?.showAlert(getUserFriendlyError(error))
             haptic.notification('error')
           }
         } else if (status === 'cancelled') {
@@ -135,7 +136,7 @@ export default function Packages() {
       })
     } catch (error: any) {
       console.error('Payment error:', error)
-      webApp?.showAlert('Failed to create invoice. Please try again.')
+      webApp?.showAlert(getUserFriendlyError(error))
       haptic.notification('error')
       setProcessing(false)
     }

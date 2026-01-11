@@ -68,7 +68,7 @@ export default function TabBar() {
               `}
               style={{ minWidth: '60px' }}
             >
-              <div className={`transition-transform ${isActive ? 'scale-110' : 'scale-100 opacity-60'}`}>
+              <div className={`transition-transform ${isActive ? 'scale-110' : 'scale-100 opacity-70'}`}>
                 <Sticker name={tab.sticker} size={28} loop={isActive} />
               </div>
               <span className="text-xs font-medium">{t(tab.labelKey)}</span>

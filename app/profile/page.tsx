@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { api, UserStats } from '../lib/api'
 import { useTelegram, useHaptic } from '../contexts/TelegramContext'
 import { t } from '../lib/translations'
+import { getUserFriendlyError } from '../lib/constants'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
 import Container from '../components/layout/Container'
@@ -46,7 +47,7 @@ export default function Profile() {
       const data = await api.getMyStats()
       setStats(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load profile')
+      setError(getUserFriendlyError(err))
     } finally {
       setLoading(false)
     }
@@ -117,7 +118,7 @@ export default function Profile() {
         {telegramUser?.username && (
           <p className="text-sm text-[var(--text-secondary)] mb-2">@{telegramUser.username}</p>
         )}
-        <div className={`px-4 py-1.5 rounded-full bg-gradient-to-r ${planInfo.gradient} text-white text-sm font-semibold`}>
+        <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${planInfo.gradient} text-white text-xs font-semibold whitespace-nowrap max-w-[140px] truncate`}>
           {planInfo.label}
         </div>
       </div>

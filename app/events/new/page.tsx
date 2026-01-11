@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { api, Channel } from '../../lib/api'
 import { useHaptic } from '../../contexts/TelegramContext'
 import { t } from '../../lib/translations'
+import { getUserFriendlyError } from '../../lib/constants'
 import Sticker from '../../components/Sticker'
 import ErrorModal from '../../components/ErrorModal'
 
@@ -74,8 +75,7 @@ export default function NewEvent() {
       setNewChannelUsername('')
       haptic.notification('success')
     } catch (err: any) {
-      const errorMessage = err.message || 'Не удалось добавить канал'
-      setError(errorMessage)
+      setError(getUserFriendlyError(err))
       setErrorDetails(JSON.stringify(err, null, 2))
       setShowErrorModal(true)
       haptic.notification('error')
@@ -105,8 +105,7 @@ export default function NewEvent() {
 
       router.push(`/event/${event._id}`)
     } catch (err: any) {
-      const errorMessage = err.message || 'Не удалось создать событие'
-      setError(errorMessage)
+      setError(getUserFriendlyError(err))
       setErrorDetails(JSON.stringify(err, null, 2))
       setShowErrorModal(true)
       haptic.notification('error')

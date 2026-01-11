@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { t } from './lib/translations'
+import { getUserFriendlyError } from './lib/constants'
 import { useHaptic } from './contexts/TelegramContext'
 import { api, DashboardStats } from './lib/api'
 import Sticker from './components/Sticker'

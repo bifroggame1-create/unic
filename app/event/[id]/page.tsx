@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { api, EventWithPositionResponse } from '../../lib/api'
 import { useTelegram } from '../../contexts/TelegramContext'
 import { t } from '../../lib/translations'
+import { getUserFriendlyError } from '../../lib/constants'
 import Sticker from '../../components/Sticker'
 import BoostModal from '../../components/BoostModal'
 import SecondChanceModal from '../../components/SecondChanceModal'
@@ -380,7 +381,7 @@ export default function EventOverview() {
                   webApp?.showAlert('Вы успешно присоединились! Теперь подпишитесь на канал и начните зарабатывать баллы.')
                   fetchData() // Reload to show user position
                 } catch (error: any) {
-                  webApp?.showAlert(error.message || 'Не удалось присоединиться к событию')
+                  webApp?.showAlert(getUserFriendlyError(error))
                 }
               }}
               className="btn-primary w-full py-4 text-lg font-bold"

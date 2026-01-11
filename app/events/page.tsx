@@ -2,8 +2,9 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { api, Event } from '../lib/api'
+import { api, Event, Channel } from '../lib/api'
 import { t } from '../lib/translations'
+import { formatChannelName, getUserFriendlyError } from '../lib/constants'
 import Sticker from '../components/Sticker'
 import { ErrorState } from '../components/ErrorState'
 
@@ -11,6 +12,7 @@ export default function Events() {
   const router = useRouter()
   // const { t, language } = useTranslation()
   const [events, setEvents] = useState<Event[]>([])
+  const [channels, setChannels] = useState<Map<number, Channel>>(new Map())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -21,10 +23,21 @@ export default function Events() {
   const loadEvents = async () => {
     try {
       setLoading(true)
-      const { events } = await api.getEvents()
+      const [{ events }, { channels: channelList }] = await Promise.all([
+        api.getEvents(),
+        api.getChannels()
+      ])
+
+      // Create channelId -> Channel map for fast lookup
+      const channelMap = new Map<number, Channel>()
+      channelList.forEach(channel => {
+        channelMap.set(channel.chatId, channel)
+      })
+
       setEvents(events)
+      setChannels(channelMap)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load events')
+      setError(getUserFriendlyError(err))
     } finally {
       setLoading(false)
     }
@@ -130,7 +143,7 @@ export default function Events() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-sm text-[var(--text-primary)] truncate">
-                      {t('events.channel')} #{event.channelId}
+                      {formatChannelName(channels.get(event.channelId) || { chatId: event.channelId })}
                     </h3>
                     <p className="text-[10px] text-[var(--text-secondary)]">{event.winnersCount} {t('events.winners')}</p>
                   </div>

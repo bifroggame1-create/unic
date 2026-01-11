@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Modal, Button } from '@telegram-apps/telegram-ui'
 import { useHaptic, useTelegram } from '../contexts/TelegramContext'
 import { t } from '../lib/translations'
+import { getUserFriendlyError } from '../lib/constants'
 import { BOOST_PRICING } from '../lib/boostConfig'
 import { trackEvent } from '../lib/analytics'
 
@@ -49,7 +50,7 @@ export default function BoostModal({
       if (error.message?.includes('reject') || error.message?.includes('cancel')) {
         webApp?.showAlert('Оплата отменена')
       } else {
-        webApp?.showAlert(error.message || 'Не удалось активировать Boost. Попробуй снова.')
+        webApp?.showAlert(getUserFriendlyError(error))
       }
 
       haptic.notification('error')

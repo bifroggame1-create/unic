@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { api, LeaderboardResponse } from '../../../lib/api'
+import { getUserFriendlyError } from '../../../lib/constants'
 import { useTelegram } from '../../../contexts/TelegramContext'
 import Sticker from '../../../components/Sticker'
 

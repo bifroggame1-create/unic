@@ -5,7 +5,6 @@ import { AppRoot } from '@telegram-apps/telegram-ui'
 import { TelegramProvider } from './contexts/TelegramContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { TonConnectProvider } from './contexts/TonConnectContext'
-import { ConnectWalletButton } from './components/ConnectWallet'
 import ErrorBoundary from './components/ErrorBoundary'
 import Header from './components/Header'
 import TabBar from './components/TabBar'
@@ -54,9 +53,6 @@ export function Providers({ children }: { children: ReactNode }) {
                   </main>
                   <TabBar />
                 </div>
-
-                {/* Connect Wallet Button */}
-                <ConnectWalletButton />
 
                 {/* Onboarding overlay */}
                 {mounted && showOnboarding && (

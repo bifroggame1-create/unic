@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { api, PublicEvent } from '../lib/api'
+import { getUserFriendlyError } from '../lib/constants'
 import Link from 'next/link'
 import Sticker from '../components/Sticker'
 
@@ -20,7 +21,7 @@ export default function DiscoverPage() {
       const data = await api.getPublicEvents()
       setEvents(data.events)
     } catch (err: any) {
-      setError(err.message || 'Failed to load events')
+      setError(getUserFriendlyError(err))
     } finally {
       setLoading(false)
     }

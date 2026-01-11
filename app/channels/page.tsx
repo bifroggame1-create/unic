@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { api, Channel } from '../lib/api'
 import { t } from '../lib/translations'
+import { getUserFriendlyError } from '../lib/constants'
 import { Modal, Button, Input } from '@telegram-apps/telegram-ui'
 import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
@@ -41,7 +42,7 @@ export default function Channels() {
       const { channels } = await api.getChannels()
       setChannels(channels)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load channels')
+      setError(getUserFriendlyError(err))
     } finally {
       setLoading(false)
     }
@@ -59,7 +60,7 @@ export default function Channels() {
       setUsername('')
       loadChannels()
     } catch (err) {
-      setAddError(err instanceof Error ? err.message : 'Failed to add channel')
+      setAddError(getUserFriendlyError(err))
     } finally {
       setAdding(false)
     }
@@ -72,7 +73,7 @@ export default function Channels() {
       await api.deleteChannel(id)
       setChannels(channels.filter(c => c._id !== id))
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete channel')
+      alert(getUserFriendlyError(err))
     }
   }
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { api, User } from '../lib/api'
 import { useTelegram, useHaptic } from '../contexts/TelegramContext'
+import { getUserFriendlyError } from '../lib/constants'
 import Container from '../components/layout/Container'
 import Sticker from '../components/Sticker'
 import ErrorModal from '../components/ErrorModal'
@@ -73,7 +74,7 @@ export default function AdminPanel() {
       setEventId('')
       setTimeout(() => setCompleteSuccess(false), 3000)
     } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to complete event')
+      setErrorMessage(getUserFriendlyError(err))
       setErrorDetails(JSON.stringify(err, null, 2))
       setShowError(true)
       haptic.notification('error')
@@ -108,7 +109,7 @@ export default function AdminPanel() {
       setUsername('')
       setTimeout(() => setGrantSuccess(false), 3000)
     } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to grant subscription')
+      setErrorMessage(getUserFriendlyError(err))
       setErrorDetails(JSON.stringify(err, null, 2))
       setShowError(true)
       haptic.notification('error')
