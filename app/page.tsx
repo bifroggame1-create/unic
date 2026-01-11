@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { t } from './lib/translations'
 import { useHaptic } from './contexts/TelegramContext'
@@ -66,11 +65,7 @@ export default function Home() {
   return (
     <div className="px-4 pt-6 pb-nav-safe max-w-2xl mx-auto">
       {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-4 mb-10"
-      >
+      <div className="flex items-center gap-4 mb-10 fade-in">
         <div className="w-20 h-20 flex items-center justify-center">
           <Sticker name="mascot/10" size={64} />
         </div>
@@ -82,24 +77,16 @@ export default function Home() {
             {stats?.plan && `${stats.plan} plan`}
           </p>
         </div>
-      </motion.div>
+      </div>
 
       {/* Section: Stats - 3 Column Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mb-10"
-      >
+      <div className="mb-10 fade-in" style={{ animationDelay: '0.1s' }}>
         <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-5">
           {t('home.stats')}
         </h2>
 
         <div className="grid grid-cols-3 gap-4">
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="card rounded-2xl p-5 text-center"
-          >
+          <div className="card rounded-2xl p-5 text-center hover-scale">
             <div className="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
               <Sticker name="mascot/60" size={48} />
             </div>
@@ -107,12 +94,9 @@ export default function Home() {
               {stats?.eventsCreated || 0}
             </div>
             <div className="text-xs text-[var(--text-secondary)] leading-tight">{t('home.events')}</div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="card rounded-2xl p-5 text-center"
-          >
+          <div className="card rounded-2xl p-5 text-center hover-scale">
             <div className="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
               <Sticker name="ducks/5" size={48} />
             </div>
@@ -120,12 +104,9 @@ export default function Home() {
               {stats?.totalParticipants ? (stats.totalParticipants >= 1000 ? `${(stats.totalParticipants / 1000).toFixed(1)}K` : stats.totalParticipants) : 0}
             </div>
             <div className="text-xs text-[var(--text-secondary)] leading-tight">{t('home.participants')}</div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="card rounded-2xl p-5 text-center"
-          >
+          <div className="card rounded-2xl p-5 text-center hover-scale">
             <div className="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
               <Sticker name="trophy" size={48} />
             </div>
@@ -133,28 +114,21 @@ export default function Home() {
               {stats?.engagementRate || 0}%
             </div>
             <div className="text-xs text-[var(--text-secondary)] leading-tight">{t('home.engagement')}</div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Section: Quick Actions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="mb-10"
-      >
+      <div className="mb-10 fade-in" style={{ animationDelay: '0.2s' }}>
         <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-5">
           {t('home.quickActions')}
         </h2>
 
         <div className="space-y-4">
           {/* New Event - Primary Action */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: 1.01 }}
+          <button
             onClick={() => handlePress('/events/new')}
-            className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] text-white rounded-2xl p-6 flex items-center justify-between shadow-[0_8px_32px_rgba(91,141,239,0.3)] active:shadow-[0_4px_16px_rgba(91,141,239,0.3)] transition-all touch-target"
+            className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] text-white rounded-2xl p-6 flex items-center justify-between shadow-[0_8px_32px_rgba(91,141,239,0.3)] active:shadow-[0_4px_16px_rgba(91,141,239,0.3)] transition-all touch-target active-scale"
           >
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
@@ -168,14 +142,12 @@ export default function Home() {
             <svg className="w-6 h-6 opacity-70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </motion.button>
+          </button>
 
           {/* My Events */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: 1.01 }}
+          <button
             onClick={() => handlePress('/events')}
-            className="w-full card rounded-2xl p-5 flex items-center justify-between touch-target transition-all"
+            className="w-full card rounded-2xl p-5 flex items-center justify-between touch-target transition-all active-scale"
           >
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/10 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -189,14 +161,12 @@ export default function Home() {
             <svg className="w-5 h-5 text-[var(--text-muted)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </motion.button>
+          </button>
 
           {/* Channels */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: 1.01 }}
+          <button
             onClick={() => handlePress('/channels')}
-            className="w-full card rounded-2xl p-5 flex items-center justify-between touch-target transition-all"
+            className="w-full card rounded-2xl p-5 flex items-center justify-between touch-target transition-all active-scale"
           >
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/10 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -210,20 +180,16 @@ export default function Home() {
             <svg className="w-5 h-5 text-[var(--text-muted)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </motion.button>
+          </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Upgrade CTA */}
       {stats && stats.plan === 'free' && (
-        <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          whileTap={{ scale: 0.97 }}
-          whileHover={{ scale: 1.01 }}
+        <button
           onClick={() => handlePress('/packages')}
-          className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-2xl p-6 flex items-center justify-between shadow-[0_8px_32px_rgba(16,185,129,0.3)] touch-target transition-all"
+          className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-2xl p-6 flex items-center justify-between shadow-[0_8px_32px_rgba(16,185,129,0.3)] touch-target transition-all active-scale fade-in"
+          style={{ animationDelay: '0.3s' }}
         >
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
@@ -237,7 +203,7 @@ export default function Home() {
           <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-        </motion.button>
+        </button>
       )}
     </div>
   )

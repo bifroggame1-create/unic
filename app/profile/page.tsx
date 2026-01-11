@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
 import { api, UserStats } from '../lib/api'
 import { useTelegram, useHaptic } from '../contexts/TelegramContext'
 import { t } from '../lib/translations'
@@ -99,11 +98,7 @@ export default function Profile() {
   return (
     <div className="px-4 pt-6 pb-nav-safe max-w-2xl mx-auto">
       {/* Avatar Section - centered, 80px */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center mb-10"
-      >
+      <div className="flex flex-col items-center mb-10 fade-in">
         {avatarUrl ? (
           <img
             src={avatarUrl}
@@ -125,15 +120,10 @@ export default function Profile() {
         <div className={`px-4 py-1.5 rounded-full bg-gradient-to-r ${planInfo.gradient} text-white text-sm font-semibold`}>
           {planInfo.label}
         </div>
-      </motion.div>
+      </div>
 
       {/* 3-Column Stats Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="grid grid-cols-3 gap-4 mb-10"
-      >
+      <div className="grid grid-cols-3 gap-4 mb-10 fade-in" style={{ animationDelay: '0.1s' }}>
         <div className="card p-4 text-center">
           <div className="text-3xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] bg-clip-text text-transparent mb-1">
             {stats?.eventsCreated || 0}
@@ -152,15 +142,10 @@ export default function Profile() {
           </div>
           <div className="text-xs text-[var(--text-secondary)]">Этот месяц</div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Badges Grid 2x3 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="mb-10"
-      >
+      <div className="mb-10 fade-in" style={{ animationDelay: '0.2s' }}>
         <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-5">
           Достижения
         </h3>
@@ -213,15 +198,10 @@ export default function Profile() {
             <div className="text-[10px] font-semibold text-[var(--text-primary)]">Сообщество</div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Monthly Usage Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="card p-6 mb-6"
-      >
+      <div className="card p-6 mb-6 fade-in" style={{ animationDelay: '0.3s' }}>
         <h3 className="font-semibold text-sm text-[var(--text-primary)] mb-4">{t('profile.monthlyUsage')}</h3>
         <div className="space-y-4">
           {/* Events Progress */}
@@ -256,15 +236,10 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Referral Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="card p-6 mb-6"
-      >
+      <div className="card p-6 mb-6 fade-in" style={{ animationDelay: '0.4s' }}>
         <div className="flex items-start gap-3 mb-3">
           <div className="w-12 h-12 flex-shrink-0">
             <Sticker name="info" size={48} />
@@ -286,25 +261,19 @@ export default function Profile() {
               readOnly
               className="input text-sm flex-1"
             />
-            <motion.button
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={handleCopyReferral}
-              className="btn-primary text-sm px-6"
+              className="btn-primary text-sm px-6 active-scale"
             >
               {copied ? '✓' : t('profile.copy')}
-            </motion.button>
+            </button>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Plan Expiry Warning */}
       {stats?.planExpiresAt && stats.plan !== 'free' && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="card p-4 mb-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-500/30"
-        >
+        <div className="card p-4 mb-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-500/30 fade-in" style={{ animationDelay: '0.6s' }}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 flex-shrink-0">
               <Sticker name="warning" size={40} />
@@ -316,20 +285,17 @@ export default function Profile() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Upgrade Button */}
-      <motion.button
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        whileTap={{ scale: 0.97 }}
+      <button
         onClick={() => {
           haptic.impact('medium')
           router.push('/packages')
         }}
-        className="btn-primary w-full text-base mb-6"
+        className="btn-primary w-full text-base mb-6 active-scale fade-in"
+        style={{ animationDelay: '0.7s' }}
       >
         {stats?.plan === 'free' ? (
           <>
@@ -342,7 +308,7 @@ export default function Profile() {
             <span>{t('profile.managePlan')}</span>
           </>
         )}
-      </motion.button>
+      </button>
 
       {/* Footer Links */}
       <div className="flex justify-center gap-4 text-xs text-[var(--text-muted)]">
