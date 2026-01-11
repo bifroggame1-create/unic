@@ -357,6 +357,50 @@ class ApiClient {
       { method: 'POST' }
     )
   }
+
+  // ========== Prize & Gifts Methods ==========
+
+  async getGiftsCatalog() {
+    return this.request<{ telegramGifts: GiftCatalogItem[] }>('/api/events/gifts/catalog')
+  }
+
+  async saveTonWallet(address: string) {
+    return this.request<{ success: boolean; message: string; tonWalletAddress: string }>(
+      '/api/users/me/ton-wallet',
+      { method: 'POST', body: { address } }
+    )
+  }
+
+  // ========== Admin - Gift Pool Methods ==========
+
+  async adminGetGiftPool() {
+    return this.request<{ gifts: GiftPoolItem[]; stats: GiftPoolStats }>('/api/admin/gift-pool')
+  }
+
+  async adminAddToGiftPool(giftId: string, quantity: number) {
+    return this.request<{ success: boolean; message: string; gift: GiftPoolItem }>(
+      '/api/admin/gift-pool/add',
+      { method: 'POST', body: { giftId, quantity } }
+    )
+  }
+
+  async adminSyncGifts() {
+    return this.request<{ success: boolean; message: string }>(
+      '/api/admin/gift-pool/sync',
+      { method: 'POST' }
+    )
+  }
+
+  async adminGetFailedPrizes() {
+    return this.request<{ prizes: PrizeDistributionItem[] }>('/api/admin/prizes/failed')
+  }
+
+  async adminRetryPrize(prizeId: string) {
+    return this.request<{ success: boolean; message: string }>(
+      `/api/admin/prizes/${this.encodeQueryParam(prizeId)}/retry`,
+      { method: 'POST' }
+    )
+  }
 }
 
 // Types
@@ -572,6 +616,63 @@ export interface PublicEvent {
     minutes: number
     totalMs: number
   }
+}
+
+// Prize & Gifts Types
+export interface GiftCatalogItem {
+  id: string
+  name: string
+  stars: number
+  rarity: 'common' | 'rare' | 'epic' | 'legendary'
+  limited: boolean
+  remainingCount?: number
+  convertStars: number
+  requirePremium: boolean
+  poolQuantity: number
+  available: boolean
+}
+
+export interface GiftPoolItem {
+  _id: string
+  giftId: string
+  name: string
+  stars: number
+  rarity: 'common' | 'rare' | 'epic' | 'legendary'
+  totalAvailable: number
+  reserved: number
+  used: number
+  limited: boolean
+  convertStars: number
+  requirePremium: boolean
+}
+
+export interface GiftPoolStats {
+  total: number
+  reserved: number
+  used: number
+  available: number
+  uniqueGifts: number
+}
+
+export interface PrizeDistributionItem {
+  _id: string
+  eventId: string
+  winnerId: number
+  position: number
+  prizeType: 'telegram_gift' | 'ton' | 'custom'
+  giftId?: string
+  tonAmount?: number
+  customReward?: {
+    name: string
+    description: string
+  }
+  status: 'pending' | 'processing' | 'sent' | 'failed'
+  attempts: number
+  lastAttemptAt?: string
+  sentAt?: string
+  error?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export const api = new ApiClient()

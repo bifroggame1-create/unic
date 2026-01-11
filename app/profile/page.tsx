@@ -10,6 +10,7 @@ import Sticker from '../components/Sticker'
 import Loading from '../components/Loading'
 import Container from '../components/layout/Container'
 import { ErrorState } from '../components/ErrorState'
+import { TonConnectButton, useTonAddress, useTonConnectUI } from '@tonconnect/ui-react'
 
 export default function Profile() {
   const router = useRouter()
@@ -20,11 +21,19 @@ export default function Profile() {
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const tonAddress = useTonAddress()
+  const [tonConnectUI] = useTonConnectUI()
 
   useEffect(() => {
     loadStats()
     loadAvatar()
   }, [])
+
+  useEffect(() => {
+    if (tonAddress) {
+      api.saveTonWallet(tonAddress).catch(console.error)
+    }
+  }, [tonAddress])
 
   const loadAvatar = async () => {
     if (!telegramUser?.id) return
@@ -270,6 +279,33 @@ export default function Profile() {
             </button>
           </div>
         )}
+      </div>
+
+      {/* TON Wallet Card */}
+      <div className="card p-6 mb-6 fade-in" style={{ animationDelay: '0.5s' }}>
+        <div className="flex items-start gap-3 mb-4">
+          <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center text-3xl">
+            💎
+          </div>
+          <div>
+            <h3 className="font-semibold text-base text-[var(--text-primary)] mb-1">
+              TON Wallet
+            </h3>
+            <p className="text-xs text-[var(--text-secondary)]">
+              Connect wallet to receive TON prizes
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <TonConnectButton />
+          {tonAddress && (
+            <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+              <p className="text-xs text-[var(--text-secondary)]">
+                ✓ Connected: <span className="font-mono">{tonAddress.slice(0, 6)}...{tonAddress.slice(-4)}</span>
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Plan Expiry Warning */}
