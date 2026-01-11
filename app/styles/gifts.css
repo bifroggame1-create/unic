@@ -1,0 +1,223 @@
+/* Telegram Gifts Prize System Styles */
+
+/* Rarity Badge Gradients */
+.badge-common {
+  background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.badge-rare {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.badge-epic {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
+}
+
+.badge-legendary {
+  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(255, 216, 155, 0.5);
+  animation: legendary-glow 2s ease-in-out infinite;
+}
+
+@keyframes legendary-glow {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(255, 216, 155, 0.5);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(255, 216, 155, 0.8);
+  }
+}
+
+/* Limited Badge with Pulse Animation */
+.badge-limited {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffa000 100%);
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+    transform: scale(1.02);
+  }
+}
+
+/* Source Badge */
+.badge-source {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+
+/* Prize Card Styles */
+.prize-card {
+  background: var(--bg-start);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.prize-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Position Badge with Medal Colors */
+.position-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.position-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #8B4513;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+.position-2 {
+  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+  color: #4B5563;
+  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.5);
+}
+
+.position-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.5);
+}
+
+/* Prize Type Icons */
+.prize-type-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.prize-type-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.prize-type-telegram {
+  background: linear-gradient(135deg, #0088cc 0%, #0077b5 100%);
+}
+
+.prize-type-ton {
+  background: linear-gradient(135deg, #0088ff 0%, #0066cc 100%);
+}
+
+.prize-type-custom {
+  background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+}
+
+/* Gift Card Hover Effect */
+.gift-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.gift-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.gift-card.selected {
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Loading Shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(
+    to right,
+    var(--bg-start) 0%,
+    var(--bg-end) 20%,
+    var(--bg-start) 40%,
+    var(--bg-start) 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Bounce Animation for CTAs */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.bounce {
+  animation: bounce 2s infinite;
+}
