@@ -6,6 +6,7 @@ import { api, Channel } from '../../lib/api'
 import { useHaptic } from '../../contexts/TelegramContext'
 import { t } from '../../lib/translations'
 import Sticker from '../../components/Sticker'
+import ErrorModal from '../../components/ErrorModal'
 
 const CheckIcon = () => (
   <svg className="w-5 h-5 text-[var(--primary)]" fill="currentColor" viewBox="0 0 20 20">
@@ -27,6 +28,8 @@ export default function NewEvent() {
   const [winners, setWinners] = useState(3)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [errorDetails, setErrorDetails] = useState('')
+  const [showErrorModal, setShowErrorModal] = useState(false)
   const [addingChannel, setAddingChannel] = useState(false)
 
   const durations = [
@@ -71,7 +74,10 @@ export default function NewEvent() {
       setNewChannelUsername('')
       haptic.notification('success')
     } catch (err: any) {
-      setError(err.message || 'Failed to add channel')
+      const errorMessage = err.message || 'Не удалось добавить канал'
+      setError(errorMessage)
+      setErrorDetails(JSON.stringify(err, null, 2))
+      setShowErrorModal(true)
       haptic.notification('error')
     } finally {
       setAddingChannel(false)
@@ -99,7 +105,10 @@ export default function NewEvent() {
 
       router.push(`/event/${event._id}`)
     } catch (err: any) {
-      setError(err.message || 'Failed to create event')
+      const errorMessage = err.message || 'Не удалось создать событие'
+      setError(errorMessage)
+      setErrorDetails(JSON.stringify(err, null, 2))
+      setShowErrorModal(true)
       haptic.notification('error')
     } finally {
       setLoading(false)
@@ -124,12 +133,6 @@ export default function NewEvent() {
           />
         ))}
       </div>
-
-      {error && (
-        <div className="bg-[var(--error)]/10 border border-[var(--error)]/20 text-[var(--error)] px-4 py-3 rounded-xl mb-4 text-sm">
-          {error}
-        </div>
-      )}
 
       {step === 1 && (
         <div className="space-y-6">
@@ -373,6 +376,24 @@ export default function NewEvent() {
           </div>
         </div>
       )}
+
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Ошибка"
+        message={error}
+        details={errorDetails}
+        showRetry={true}
+        onRetry={() => {
+          setShowErrorModal(false)
+          if (step === 1) {
+            handleAddChannel()
+          } else if (step === 3) {
+            handleCreate()
+          }
+        }}
+      />
     </div>
   )
 }
