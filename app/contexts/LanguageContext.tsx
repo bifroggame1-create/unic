@@ -825,9 +825,9 @@ const translations = {
     zh: '如何连接频道',
   },
   'channels.step1': {
-    en: 'Add @UnicBot as admin to your channel',
-    ru: 'Добавьте @UnicBot как админа в канал',
-    zh: '将@UnicBot添加为频道管理员',
+    en: 'Add @rtyrtrebot as admin to your channel',
+    ru: 'Добавьте @rtyrtrebot как админа в канал',
+    zh: '将@rtyrtrebot添加为频道管理员',
   },
   'channels.step2': {
     en: 'Click "Add Channel" and enter channel username',
@@ -884,9 +884,9 @@ const translations = {
     zh: '暂无连接的频道',
   },
   'newEvent.ensureAdmin': {
-    en: 'Make sure @UnicBot is added as admin to your channel',
-    ru: 'Убедитесь, что @UnicBot добавлен как админ канала',
-    zh: '确保@UnicBot已被添加为频道管理员',
+    en: 'Make sure @rtyrtrebot is added as admin to your channel',
+    ru: 'Убедитесь, что @rtyrtrebot добавлен как админ канала',
+    zh: '确保@rtyrtrebot已被添加为频道管理员',
   },
   'newEvent.eventSettings': {
     en: 'Event Settings',

@@ -64,12 +64,12 @@ export default function Home() {
   }
 
   return (
-    <div className="px-4 pt-4 pb-nav-safe max-w-2xl mx-auto">
+    <div className="px-4 pt-6 pb-nav-safe max-w-2xl mx-auto">
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-4 mb-8"
+        className="flex items-center gap-4 mb-10"
       >
         <div className="w-20 h-20 flex items-center justify-center">
           <Sticker name="mascot/10" size={64} />
@@ -89,13 +89,13 @@ export default function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mb-8"
+        className="mb-10"
       >
-        <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
+        <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-5">
           {t('home.stats')}
         </h2>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-4">
           <motion.div
             whileHover={{ scale: 1.02 }}
             className="card rounded-2xl p-5 text-center"
@@ -142,13 +142,13 @@ export default function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-8"
+        className="mb-10"
       >
-        <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
+        <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-5">
           {t('home.quickActions')}
         </h2>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* New Event - Primary Action */}
           <motion.button
             whileTap={{ scale: 0.97 }}

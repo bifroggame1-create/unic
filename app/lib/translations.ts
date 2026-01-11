@@ -34,7 +34,7 @@ export function t(key: string): string {
     'channels.noChannelsYet': 'Пока нет каналов',
     'channels.connectFirstChannel': 'Подключите свой первый канал для начала',
     'channels.howToConnect': 'Как подключить',
-    'channels.step1': 'Добавьте @UnicBot как администратора в свой канал',
+    'channels.step1': 'Добавьте @rtyrtrebot как администратора в свой канал',
     'channels.step2': 'Введите имя канала ниже',
     'channels.step3': 'Начните создавать события вовлечения!',
     'channels.noChannels': 'Нет каналов',
@@ -84,7 +84,7 @@ export function t(key: string): string {
     // Новое событие
     'newEvent.selectChannel': 'Выберите канал',
     'newEvent.selectChannelDesc': 'Выберите в каком канале запустить событие',
-    'newEvent.ensureAdmin': 'Убедитесь, что @UnicBot администратор в вашем канале',
+    'newEvent.ensureAdmin': 'Убедитесь, что @rtyrtrebot администратор в вашем канале',
     'newEvent.connectedChannels': 'Подключенные каналы',
     'newEvent.noChannelsConnected': 'Пока нет подключенных каналов',
     'newEvent.eventSettings': 'Настройки события',

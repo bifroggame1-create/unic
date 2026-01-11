@@ -35,7 +35,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     title: 'Channels',
-    description: 'Connect your Telegram channels. Add @UnicBot as admin and link with one click.',
+    description: 'Connect your Telegram channels. Add @rtyrtrebot as admin and link with one click.',
     sticker: 'onboard3',
     highlight: 'tab-channels',
   },

@@ -29,7 +29,7 @@ export function TonConnectProvider({ children }: { children: ReactNode }) {
         ]
       }}
       actionsConfiguration={{
-        twaReturnUrl: 'https://t.me/UnicBot'
+        twaReturnUrl: 'https://t.me/rtyrtrebot'
       }}
     >
       {children}

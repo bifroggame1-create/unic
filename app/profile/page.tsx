@@ -35,6 +35,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
   const getThemeLabel = (themeItem: typeof THEMES[number]) => {
     return themeItem.label
@@ -42,7 +43,23 @@ export default function Profile() {
 
   useEffect(() => {
     loadStats()
+    loadAvatar()
   }, [])
+
+  const loadAvatar = async () => {
+    if (!telegramUser?.id) return
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/users/${telegramUser.id}/avatar`)
+      if (response.ok) {
+        const data = await response.json()
+        setAvatarUrl(data.avatarUrl)
+      }
+    } catch (err) {
+      console.error('Failed to load avatar:', err)
+      // Ignore errors - just use fallback
+    }
+  }
 
   const loadStats = async () => {
     try {
@@ -59,7 +76,7 @@ export default function Profile() {
   const handleCopyReferral = async () => {
     if (!stats?.referralCode) return
     haptic.impact('light')
-    const link = `https://t.me/UnicBot?start=ref_${stats.referralCode}`
+    const link = `https://t.me/rtyrtrebot?start=ref_${stats.referralCode}`
     await navigator.clipboard.writeText(link)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -100,16 +117,24 @@ export default function Profile() {
   const planInfo = stats ? getPlanDisplay(stats.plan) : getPlanDisplay('free')
 
   return (
-    <div className="px-4 pt-4 pb-nav-safe max-w-2xl mx-auto">
+    <div className="px-4 pt-6 pb-nav-safe max-w-2xl mx-auto">
       {/* Avatar Section - centered, 80px */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center mb-6"
+        className="flex flex-col items-center mb-10"
       >
-        <div className={`w-20 h-20 bg-gradient-to-br ${planInfo.gradient} rounded-full flex items-center justify-center text-white text-3xl font-bold mb-3 shadow-lg`}>
-          {telegramUser?.first_name?.charAt(0) || telegramUser?.username?.charAt(0) || String(telegramUser?.id).charAt(0) || '?'}
-        </div>
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt="Profile"
+            className="w-20 h-20 rounded-full mb-3 shadow-lg object-cover"
+          />
+        ) : (
+          <div className={`w-20 h-20 bg-gradient-to-br ${planInfo.gradient} rounded-full flex items-center justify-center text-white text-3xl font-bold mb-3 shadow-lg`}>
+            {telegramUser?.first_name?.charAt(0) || telegramUser?.username?.charAt(0) || String(telegramUser?.id).charAt(0) || '?'}
+          </div>
+        )}
         <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">
           {telegramUser?.first_name || telegramUser?.username || `User ${telegramUser?.id}` || 'User'}
           {telegramUser?.last_name && ` ${telegramUser.last_name}`}
@@ -127,7 +152,7 @@ export default function Profile() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-3 gap-3 mb-6"
+        className="grid grid-cols-3 gap-4 mb-10"
       >
         <div className="card p-4 text-center">
           <div className="text-3xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] bg-clip-text text-transparent mb-1">
@@ -154,12 +179,12 @@ export default function Profile() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-6"
+        className="mb-10"
       >
-        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">
+        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-5">
           Достижения
         </h3>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-4">
           {/* Badge 1 - Active User */}
           <div className="card p-4 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 mb-2 flex items-center justify-center">
@@ -215,7 +240,7 @@ export default function Profile() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="card p-5 mb-4"
+        className="card p-6 mb-6"
       >
         <h3 className="font-semibold text-sm text-[var(--text-primary)] mb-4">{t('profile.monthlyUsage')}</h3>
         <div className="space-y-4">
@@ -258,7 +283,7 @@ export default function Profile() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="card p-5 mb-4"
+        className="card p-6 mb-6"
       >
         <h3 className="font-semibold text-sm text-[var(--text-primary)] mb-4">{t('profile.settings')}</h3>
 
@@ -314,7 +339,7 @@ export default function Profile() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="card p-5 mb-4"
+        className="card p-6 mb-6"
       >
         <div className="flex items-start gap-3 mb-3">
           <div className="w-12 h-12 flex-shrink-0">
@@ -333,7 +358,7 @@ export default function Profile() {
           <div className="flex gap-2">
             <input
               type="text"
-              value={`t.me/UnicBot?start=ref_${stats.referralCode}`}
+              value={`t.me/rtyrtrebot?start=ref_${stats.referralCode}`}
               readOnly
               className="input text-sm flex-1"
             />
